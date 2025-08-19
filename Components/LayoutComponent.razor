@@ -1,0 +1,25 @@
+﻿
+<MudDrawerContainer Style="height:100vh">
+    <MudDrawer @bind-Open="@_openStart" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent" Style="border: 1px solid black">
+        <NavigationDrawer />
+    </MudDrawer>
+
+    <div class="d-flex flex-column align-items-center justify-content-center overflow-hidden">
+        <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.Menu" OnClick="@ToggleStartDrawer" Class="mb-2">
+            Toggle navigation
+        </MudButton>
+        @Body
+    </div>
+</MudDrawerContainer>
+
+@code {
+    
+    [Parameter]
+    public RenderFragment? Body { get; set; }
+    private bool _openStart = false;
+
+    private void ToggleStartDrawer()
+    {
+        _openStart = !_openStart;
+    }
+}

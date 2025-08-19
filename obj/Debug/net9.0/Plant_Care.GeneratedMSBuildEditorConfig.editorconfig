@@ -27,6 +27,14 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/kimbe/Desktop/Coding projects/Plant_Care/Components/LayoutComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRDb21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/kimbe/Desktop/Coding projects/Plant_Care/Components/NavigationDrawer.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xOYXZpZ2F0aW9uRHJhd2VyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/kimbe/Desktop/Coding projects/Plant_Care/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
