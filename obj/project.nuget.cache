@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "dgSpecHash": "HsEdiqBuMJI=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\kimbe\\Desktop\\Coding projects\\Plant_Care\\Plant_Care.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\kimbe\\.nuget\\packages\\auth0.aspnetcore.authentication\\1.4.0\\auth0.aspnetcore.authentication.1.4.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.aspnetcore.authentication.openidconnect\\6.0.25\\microsoft.aspnetcore.authentication.openidconnect.6.0.25.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.identitymodel.abstractions\\6.34.0\\microsoft.identitymodel.abstractions.6.34.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\6.34.0\\microsoft.identitymodel.jsonwebtokens.6.34.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.identitymodel.logging\\6.34.0\\microsoft.identitymodel.logging.6.34.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.identitymodel.protocols\\6.34.0\\microsoft.identitymodel.protocols.6.34.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\6.34.0\\microsoft.identitymodel.protocols.openidconnect.6.34.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.34.0\\microsoft.identitymodel.tokens.6.34.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\system.identitymodel.tokens.jwt\\6.34.0\\system.identitymodel.tokens.jwt.6.34.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\system.runtime\\4.3.0\\system.runtime.4.3.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\system.security.cryptography.cng\\4.5.0\\system.security.cryptography.cng.4.5.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\system.text.encoding\\4.3.0\\system.text.encoding.4.3.0.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\system.text.encodings.web\\4.7.2\\system.text.encodings.web.4.7.2.nupkg.sha512",
+    "C:\\Users\\kimbe\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512"
+  ],
+  "logs": []
+}
