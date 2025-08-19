@@ -43,8 +43,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xOYXZpZ2F0aW9uRHJhd2VyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/kimbe/Desktop/Coding projects/Plant_Care/Pages/Index.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+[C:/Users/kimbe/Desktop/Coding projects/Plant_Care/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSG9tZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/kimbe/Desktop/Coding projects/Plant_Care/Pages/IndividualPlant.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kaXZpZHVhbFBsYW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/kimbe/Desktop/Coding projects/Plant_Care/Pages/Profile.razor]

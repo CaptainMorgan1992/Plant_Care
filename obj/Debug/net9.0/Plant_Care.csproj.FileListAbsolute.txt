@@ -1,3 +1,13 @@
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.csproj.AssemblyReference.cache
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\rpswa.dswa.cache.json
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.AssemblyInfoInputs.cache
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.AssemblyInfo.cs
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.csproj.CoreCompileInputs.cache
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.RazorAssemblyInfo.cache
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.RazorAssemblyInfo.cs
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.sourcelink.json
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\bin\Debug\net9.0\appsettings.json
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\bin\Debug\net9.0\Plant_Care.staticwebassets.runtime.json
@@ -175,16 +185,6 @@ C:\Users\kimbe\Desktop\Coding projects\Plant_Care\bin\Debug\net9.0\runtimes\win\
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.csproj.AssemblyReference.cache
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\rpswa.dswa.cache.json
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.AssemblyInfoInputs.cache
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.AssemblyInfo.cs
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.csproj.CoreCompileInputs.cache
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.RazorAssemblyInfo.cache
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.RazorAssemblyInfo.cs
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.sourcelink.json
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\rjimswa.dswa.cache.json
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
@@ -200,7 +200,6 @@ C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\7j
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\w2km96jxmu-jbg3e4r6vc.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\k0ltcl99q6-xh4min5gqg.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\z0p26o5ml4-bleetc4i20.gz
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\6k2dnrwqik-9h0ap5c645.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\7fz2jj7s4c-61n19gt1b8.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\kxm0bn3jg8-41itpf5x76.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\yu9tub9bg5-41itpf5x76.gz
@@ -214,3 +213,4 @@ C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\refint\Plant_
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.pdb
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.genruntimeconfig.cache
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\ref\Plant_Care.dll
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\1r8bidsjda-uvc3fbw9k6.gz

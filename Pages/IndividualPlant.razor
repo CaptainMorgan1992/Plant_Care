@@ -1,0 +1,38 @@
+﻿@page "/plants/{id:int}"
+@using Auth0_Blazor.Models
+@using Auth0_Blazor.Services
+@inject PlantService PlantService
+
+<MudPaper Class="plant-details-container mx-auto my-4" Elevation="0" Style="max-width:1000px;">
+    <div class="image-container">
+        <img src="@plant?.ImageUrl" alt="@plant?.Name" class="plant-image" />
+        <div class="image-fade"></div>
+        <div class="plant-info-overlay">
+            <MudText Typo="Typo.h3" Align="Align.Center" Class="plant-name">
+                @plant?.Name
+            </MudText>
+        </div>
+    </div>
+    <div class="plant-details-below">
+        <MudText Typo="Typo.subtitle2" Align="Align.Left" Class="plant-origin">
+            @plant?.Origin
+        </MudText>
+        <MudText Typo="Typo.body1" Class="mt-2">
+            @plant?.Description
+        </MudText>
+    </div>
+</MudPaper>
+
+@code {
+    
+    [Parameter]
+    public int id { get; set; }
+
+    private Plant plant;
+
+    protected override async Task OnInitializedAsync()
+    {
+        plant = await PlantService.GetPlantByIdAsync(id);
+    }
+    
+}

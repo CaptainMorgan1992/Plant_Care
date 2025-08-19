@@ -1,4 +1,5 @@
 ﻿using Auth0_Blazor.Data;
+using Auth0_Blazor.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Auth0.AspNetCore.Authentication;
@@ -23,6 +24,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Add services to the container.
 builder.Services.AddMudServices();
+builder.Services.AddScoped<PlantService>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenProvider>();
@@ -43,6 +45,8 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.MapStaticAssets();
 
 app.UseAuthentication();
 app.UseAuthorization();
