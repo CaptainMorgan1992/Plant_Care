@@ -13,5 +13,7 @@
     };
 }
 
+@*This loads the initial state of the application, including tokens, and passes it to the App component.
+(the app.razor is the root)*@
 <component param-InitialState="tokens" type="typeof(App)" render-mode="ServerPrerendered" />
 
