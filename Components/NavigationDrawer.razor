@@ -5,8 +5,7 @@
 
 <MudNavMenu Rounded="true" Margin="Margin.Normal" Color="Color.Tertiary" Class="pa-2">
     <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Match="NavLinkMatch.Prefix" Href="counter" Icon="@Icons.Material.Filled.Numbers">Counter</MudNavLink>
-    <MudNavLink Href="profile" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
     
     <AuthorizeView>
         <Authorized>
@@ -14,20 +13,13 @@
                 @context.User.Identity?.Name
             </MudNavLink>
             <MudNavLink Class="nav-item px-3">
-                <form action="Account/Logout" method="post" style="display:inline;">
-                    <AntiforgeryToken/>
-                    <input type="hidden" name="ReturnUrl" value="@currentUrl"/>
-                    <MudButton Type="Submit" Variant="Variant.Text" Color="Color.Primary" Class="nav-link">
+                    <MudButton Href="/logout" Variant="Variant.Text" Color="Color.Primary" Class="nav-link">
                         <MudIcon Icon="@Icons.Material.Filled.Logout" /> Logout
                     </MudButton>
-                </form>
             </MudNavLink>
         </Authorized>
         <NotAuthorized>
-            <MudNavLink Href="Account/Register" Icon="@Icons.Material.Filled.PersonAdd" Class="nav-item px-3">
-                Register
-            </MudNavLink>
-            <MudNavLink Href="Account/Login" Icon="@Icons.Material.Filled.Login" Class="nav-item px-3">
+            <MudNavLink Href="/login?redirectUri=/" Icon="@Icons.Material.Filled.Login" Class="nav-item px-3">
                 Login
             </MudNavLink>
         </NotAuthorized>

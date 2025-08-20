@@ -1,11 +1,11 @@
 ﻿@namespace Components
 
 <MudDrawerContainer Style="height:100vh">
-    <MudDrawer @bind-Open="@_openStart" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent" Style="border: 1px solid black">
-        <NavigationDrawer />
+    <MudDrawer @bind-Open="@_openStart" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
+        <NavigationDrawer/>
     </MudDrawer>
 
-    <div class="d-flex flex-column align-items-center justify-content-center overflow-hidden">
+    <div class="d-flex flex-column align-items-center justify-content-center overflow-hidden mt-3">
         <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.Menu" OnClick="@ToggleStartDrawer" Class="mb-2">
             Toggle navigation
         </MudButton>
