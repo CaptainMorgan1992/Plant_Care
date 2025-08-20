@@ -16,7 +16,6 @@ public class UserService
 
     public async Task<string?> GetUserIdAsync()
     {
-        fetchCurrentUser();
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         
@@ -28,16 +27,20 @@ public class UserService
         
     }
 
-    public async Task<User> fetchCurrentUser()
+    private async Task<User> FetchCurrentUser()
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var claimsUser = authState.User;
+        
+        var ownerIdClaim = claimsUser.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        
+        if (ownerIdClaim is null || string.IsNullOrWhiteSpace(ownerIdClaim.Value))
+            throw new Exception("OwnerId missing in claims!");
 
         var user = new User
         {
-            OwnerId = claimsUser.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
+            OwnerId = ownerIdClaim.Value,
             Name = claimsUser.Identity?.Name,
-            // Lägg till fler properties om du har!
         };
 
         return user;
