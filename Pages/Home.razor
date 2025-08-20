@@ -7,7 +7,6 @@
 
 <PageTitle>Home</PageTitle>
 
-
 <div class="grid-layout-cards">
     @foreach(var plant in plants) {
         <div style="flex: 1 1 300px; max-width: 300px">
@@ -19,10 +18,11 @@
                     </MudText>
                     <MudText Typo="Typo.body2">
                         @Truncate(plant.Description, 70)
-                    </MudText>
+                                </MudText>
                 </MudCardContent>
-                <MudCardActions Class="d-flex align-items-center justify-content-center">
+                <MudCardActions Class="d-flex align-items-center justify-content-center flex-column">
                     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => NavigateToPlantById(@plant.Id))">Learn more</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => AddPlantToHouseHold(@plant.Id))">Add to household</MudButton>
                 </MudCardActions>
             </MudCard>
         </div>
@@ -46,5 +46,12 @@
     private void NavigateToPlantById(int id)
     {
         NavigationManager.NavigateTo($"/plants/{id}");
+    }
+    
+    private void AddPlantToHouseHold(int id)
+    {
+        // Logic to add the plant to the household
+        Logger.LogInformation($"Plant with ID {id} added to household.");
+        // You might want to call a service method here to handle the addition
     }
 }

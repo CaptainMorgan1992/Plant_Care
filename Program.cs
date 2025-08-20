@@ -1,8 +1,5 @@
-﻿using Auth0_Blazor;
-using Auth0_Blazor.Data;
+﻿using Auth0_Blazor.Data;
 using Auth0_Blazor.Services;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Auth0.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
@@ -26,6 +23,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Add services to the container.
 builder.Services.AddMudServices();
 builder.Services.AddScoped<PlantService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenProvider>();
