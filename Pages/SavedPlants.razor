@@ -1,5 +1,4 @@
 ﻿@page "/savedPlants"
-@using MudBlazor.Extensions
 
 @inject Services.UserService UserService
 
@@ -15,9 +14,7 @@ else
 }*@
 <AuthorizeView>
     <Authorized Context="authContext">
-        <h3>Ditt Auth0-användar-id:</h3>
-        <p>@authContext.User.FindFirst("sub")?.Value</p>
-        <p>Inloggad med: @authContext.User.Identity?.AuthenticationType</p>
+        <p>@UserId</p>
     </Authorized>
     <NotAuthorized>
         <p>Du är inte inloggad.</p>

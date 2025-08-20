@@ -17,17 +17,10 @@ public class UserService
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-
-        // Hämta Auth0 användar-id (sub claim)
-        var userId = user.FindFirst("sub")?.Value;
-        _logger.LogInformation("UserId (sub): {UserId}", userId);
-
-        // (Valfritt) Logga ut alla claims
-        foreach (var claim in user.Claims)
-        {
-            _logger.LogInformation("Claim type: {Type}, value: {Value}", claim.Type, claim.Value);
-        }
-
+        
+        var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        _logger.LogInformation("UserId (nameidentifier): {UserId}", userId);
         return userId;
+        
     }
 }
