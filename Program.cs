@@ -1,4 +1,5 @@
-﻿using Auth0_Blazor.Data;
+﻿using Auth0_Blazor;
+using Auth0_Blazor.Data;
 using Auth0_Blazor.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;

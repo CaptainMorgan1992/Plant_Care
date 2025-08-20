@@ -3,6 +3,17 @@
 <PageTitle>PlantCare</PageTitle>
 
 
+@* Required *@
+<MudThemeProvider />
+<MudPopoverProvider />
+
+@* Needed for dialogs *@
+<MudDialogProvider />
+
+@* Needed for snackbars *@
+<MudSnackbarProvider />
+
 @*<NavMenu />*@
 
-    <div class="main-content">@Body</div>
+<LayoutComponent Body="@Body"/>
+
