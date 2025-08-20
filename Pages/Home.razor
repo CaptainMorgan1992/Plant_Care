@@ -5,6 +5,8 @@
 @inject PlantService PlantService
 @inject NavigationManager NavigationManager
 @inject ILogger<Home> Logger
+@inject UserPlantService UserPlantService
+@inject UserService UserService
 
 <PageTitle>Home</PageTitle>
 
@@ -60,7 +62,9 @@
     
     private void AddPlantToHouseHold(int id)
     {
-        // Logic to add the plant to the household
+        // 1. Add the user who is logged in to the DB
+
+        // 2. Add the plant to the connection table between the user and the plant
         Logger.LogInformation($"Plant with ID {id} added to household.");
         // You might want to call a service method here to handle the addition
     }

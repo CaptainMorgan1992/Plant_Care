@@ -2,7 +2,7 @@
 
 public class UserPlant
 {
-    public int Id { get; set; }
-    public int PlantId { get; set; }
-    public int UserId { get; set; }
+    public int Id { get; init; }
+    public required int PlantId { get; init; }
+    public required int UserId { get; init; }
 }
