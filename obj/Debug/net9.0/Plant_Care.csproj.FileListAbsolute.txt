@@ -194,7 +194,6 @@ C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\scopedcss\bun
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\scopedcss\projectbundle\Plant_Care.bundle.scp.css
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\tzxjg6is5z-n8rndlt7dy.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\0wz98yz2xy-ofbdodmtsc.gz
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\1r8bidsjda-uvc3fbw9k6.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\739k54ap18-bpk8xqwxhs.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\jf0vvtkcs8-8inm30yfxf.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\7jemip7nkl-cmapd0fi15.gz
@@ -214,3 +213,4 @@ C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\refint\Plant_
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.pdb
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\Plant_Care.genruntimeconfig.cache
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\ref\Plant_Care.dll
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\1r8bidsjda-csv6xzj2c8.gz

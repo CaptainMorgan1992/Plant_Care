@@ -64,7 +64,7 @@
     font-weight: bold;
     background: none;
     border-radius: 0;
-    color: darkred;
+    color: #235304;
 }
 
 .plant-details-below {
@@ -75,4 +75,22 @@
 .plant-origin {
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
+}
+
+.image-container-relative {
+    position: relative;
+}
+
+.button-bottom-right {
+    position: absolute;
+    width: 25px;
+    height: 34px;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
+}
+
+.button-bottom-right svg {
+    width: 30px;
+    height: 30px;
 }

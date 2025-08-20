@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Services
+@using Auth0_Blazor.Icons
 @inject PlantService PlantService
 @inject NavigationManager NavigationManager
 @inject ILogger<Home> Logger
@@ -11,18 +12,27 @@
     @foreach(var plant in plants) {
         <div style="flex: 1 1 300px; max-width: 300px">
             <MudCard Class="m-2 rounded-3 d-flex" Width="300px" Style="height: 400px;">
-                <MudCardMedia Image="@plant.ImageUrl" Height="250" Class="object-fit-cover"/>
+                <div class="image-container-relative">
+                    <MudCardMedia Image="@plant.ImageUrl" Height="250" Class="object-fit-cover"/>
+                    <AuthorizeView>
+                        <Authorized>
+                            <MudButton Class="button-bottom-right"
+                                       OnClick="@(() => AddPlantToHouseHold(@plant.Id))">
+                                <AddSymbol/>
+                            </MudButton>
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
                 <MudCardContent Class="d-flex flex-column align-items-center justify-content-center gap-3">
                     <MudText Typo="Typo.h5">
                         @plant.Name
                     </MudText>
                     <MudText Typo="Typo.body2">
                         @Truncate(plant.Description, 70)
-                                </MudText>
+                    </MudText>
                 </MudCardContent>
-                <MudCardActions Class="d-flex align-items-center justify-content-center flex-column">
+                <MudCardActions Class="d-flex align-items-center justify-content-center">
                     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => NavigateToPlantById(@plant.Id))">Learn more</MudButton>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => AddPlantToHouseHold(@plant.Id))">Add to household</MudButton>
                 </MudCardActions>
             </MudCard>
         </div>
