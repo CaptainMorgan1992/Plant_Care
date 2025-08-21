@@ -11,9 +11,9 @@
 <PageTitle>Home</PageTitle>
 
 <div class="grid-layout-cards">
-    @foreach(var plant in plants) {
+    @foreach(var plant in Plants) {
         <div style="flex: 1 1 300px; max-width: 300px">
-            <MudCard Class="m-2 rounded-3 d-flex" Style="height: 400px;">
+            <MudCard Class="m-2 rounded-3 d-flex" Style="height: 450px;">
                 <div class="image-container-relative">
                     <MudCardMedia Image="@plant.ImageUrl" Height="250" Class="object-fit-cover"/>
                     <AuthorizeView>
@@ -34,7 +34,8 @@
                     </MudText>
                 </MudCardContent>
                 <MudCardActions Class="d-flex align-items-center justify-content-center">
-                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => NavigateToPlantById(@plant.Id))">Learn more</MudButton>
+                    <MudButton Variant="Variant.Text" Class="mb-3 green-text"
+                               OnClick="@(() => NavigateToPlantById(@plant.Id))">Learn more</MudButton>
                 </MudCardActions>
             </MudCard>
         </div>
@@ -42,17 +43,16 @@
 </div>
 
 @code {
-    private List<Plant> plants;
+    public required List<Plant> Plants;
 
     protected override async Task OnInitializedAsync()
     {
-        plants = await PlantService.GetAllPlantsAsync();
+        Plants = await PlantService.GetAllPlantsAsync();
     }
         
-    private string Truncate(string text, int maxLength)
+    private static string Truncate(string text, int maxLength)
     {
-        if (string.IsNullOrEmpty(text)) return text;
-        return text.Length > maxLength ? text.Substring(0, maxLength) + "..." : text;
+        return PlantService.TruncateDescription(text, maxLength);
     }
         
     private void NavigateToPlantById(int id)

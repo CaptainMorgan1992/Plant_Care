@@ -1,4 +1,5 @@
 ﻿@namespace Components
+@using Auth0_Blazor.Icons
 
 <MudDrawerContainer Style="height:100vh">
     <MudDrawer @bind-Open="@_openStart" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
@@ -6,8 +7,9 @@
     </MudDrawer>
 
     <div class="d-flex flex-column align-items-center justify-content-center overflow-hidden mt-3">
-        <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.Menu" OnClick="@ToggleStartDrawer" Class="mb-2">
-            Toggle navigation
+        <MudButton OnClick="@ToggleStartDrawer" Class="toggle-button mb-2 d-flex align-items-center justify-content-center green-text">
+            <ToggleNavDrawer/>
+            Navigation
         </MudButton>
         @Body
     </div>

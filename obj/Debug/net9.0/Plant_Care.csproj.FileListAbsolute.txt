@@ -204,7 +204,6 @@ C:\Users\kimbe\Desktop\Coding projects\Plant_Care\bin\Debug\net9.0\Microsoft.Ext
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\bin\Debug\net9.0\Microsoft.JSInterop.dll
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\tzxjg6is5z-n8rndlt7dy.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\0wz98yz2xy-ofbdodmtsc.gz
-C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\1r8bidsjda-csv6xzj2c8.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\739k54ap18-bpk8xqwxhs.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\jf0vvtkcs8-8inm30yfxf.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\7jemip7nkl-cmapd0fi15.gz
@@ -214,3 +213,4 @@ C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\z0
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\7fz2jj7s4c-61n19gt1b8.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\kxm0bn3jg8-41itpf5x76.gz
 C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\yu9tub9bg5-41itpf5x76.gz
+C:\Users\kimbe\Desktop\Coding projects\Plant_Care\obj\Debug\net9.0\compressed\1r8bidsjda-3pw7gaw786.gz

@@ -94,3 +94,12 @@
     width: 30px;
     height: 30px;
 }
+
+.green-text {
+    color: #189158;
+}
+
+.toggle-button svg {
+    width: 30px !important;
+    margin-right: 8px;
+}
