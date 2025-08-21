@@ -60,10 +60,8 @@
         NavigationManager.NavigateTo($"/plants/{id}");
     }
     
-    private async Task AddPlantToHouseHold(int id)
+    private async Task AddPlantToHouseHold(int plantId)
     {
-        await UserService.SaveUserOnClick();
-        Logger.LogInformation($"Plant with ID {id} added to household.");
-        // You might want to call a service method here to handle the addition
+        await UserPlantService.AddPlantToUserHouseholdAsync(plantId);
     }
 }

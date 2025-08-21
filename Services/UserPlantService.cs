@@ -1,6 +1,50 @@
-﻿namespace Auth0_Blazor.Services;
+﻿using Auth0_Blazor.Data;
+using Auth0_Blazor.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace Auth0_Blazor.Services;
 
 public class UserPlantService
 {
+    private readonly ApplicationDbContext _db;
+    private readonly UserService _userService;
+    private readonly ILogger<UserPlantService> _logger;
+
+    public UserPlantService(ApplicationDbContext db, UserService userService, ILogger<UserPlantService> logger)
+    {
+        _db = db;
+        _userService = userService;
+        _logger = logger;
+    }
     
+    public async Task AddPlantToUserHouseholdAsync(int plantId)
+    {
+        await _userService.SaveUserOnClick();
+        var ownerId = await _userService.GetUserAuth0IdAsync();
+        var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
+
+        if (!userId.HasValue)
+        {
+            _logger.LogWarning("Ingen användare hittades för OwnerId {OwnerId}. Planta kan inte kopplas.", ownerId);
+            return;
+        }
+
+        var exists = await _db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId.Value);
+        if (exists)
+        {
+            _logger.LogInformation("PlantId {PlantId} är redan kopplad till UserId {UserId}.", plantId, userId.Value);
+            return;
+        }
+
+        var userPlant = new UserPlant
+        {
+            PlantId = plantId,
+            UserId = userId.Value
+        };
+
+        _db.UserPlants.Add(userPlant);
+        await _db.SaveChangesAsync();
+
+        _logger.LogInformation("PlantId {PlantId} kopplades till UserId {UserId}.", plantId, userId.Value);
+    }
 }

@@ -10,8 +10,6 @@ public class UserService
     private readonly AuthenticationStateProvider _authStateProvider;
     private readonly ILogger<UserService> _logger;
     private readonly ApplicationDbContext _db;
-    /*public required string UserId;
-    public required string Username;*/
 
     public UserService (
         AuthenticationStateProvider authStateProvider,
@@ -24,7 +22,7 @@ public class UserService
     }
 
 
-    public async Task<string> GetUserIdAsync()
+    public async Task<string> GetUserAuth0IdAsync()
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
@@ -38,6 +36,15 @@ public class UserService
         }
         
         return userId;
+    }
+    
+    public async Task<int?> GetUserIdByOwnerIdAsync(string ownerId)
+    {
+        var user = await _db.Users
+            .Where(u => u.OwnerId == ownerId)
+            .FirstOrDefaultAsync();
+
+        return user?.Id;
     }
 
     public async Task<string> FetchCurrentUserAsync()
@@ -56,7 +63,7 @@ public class UserService
 
     public async Task SaveUserOnClick()
     {
-        var userId = await GetUserIdAsync();
+        var userId = await GetUserAuth0IdAsync();
         var username = await FetchCurrentUserAsync();
 
         var exists = await _db.Users.AnyAsync(u => u.OwnerId == userId);
