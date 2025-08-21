@@ -9,8 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuth0WebAppAuthentication(options =>
 {
-    options.Domain = builder.Configuration["Auth0:Domain"];
-    options.ClientId = builder.Configuration["Auth0:ClientId"];
+    options.Domain = builder.Configuration["Auth0:Domain"] 
+                     ?? throw new InvalidOperationException("Auth0:Domain not configured");
+
+    options.ClientId = builder.Configuration["Auth0:ClientId"]
+                       ?? throw new InvalidOperationException("Auth0:ClientId not configured");
     options.Scope = "openid profile email";
 });
 

@@ -10,7 +10,7 @@ public class UserPlantService
     private readonly UserService _userService;
     private readonly ILogger<UserPlantService> _logger;
 
-    public UserPlantService(ApplicationDbContext db, UserService userService, ILogger<UserPlantService> logger)
+    public UserPlantService (ApplicationDbContext db, UserService userService, ILogger<UserPlantService> logger)
     {
         _db = db;
         _userService = userService;
@@ -25,14 +25,14 @@ public class UserPlantService
 
         if (!userId.HasValue)
         {
-            _logger.LogWarning("Ingen användare hittades för OwnerId {OwnerId}. Planta kan inte kopplas.", ownerId);
+            _logger.LogWarning("No user found for OwnerId {OwnerId}. Plant cannot be connected.", ownerId);
             return;
         }
 
         var exists = await _db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId.Value);
         if (exists)
         {
-            _logger.LogInformation("PlantId {PlantId} är redan kopplad till UserId {UserId}.", plantId, userId.Value);
+            _logger.LogInformation("PlantId {PlantId} is already connected to {UserId}.", plantId, userId.Value);
             return;
         }
 

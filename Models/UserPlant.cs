@@ -9,9 +9,9 @@ public class UserPlant
     
     // Navigation property till Plant
     [ForeignKey(nameof(PlantId))]
-    public Plant Plant { get; set; }
+    public Plant? Plant { get; set; }
 
     // Navigation property till User 
     [ForeignKey(nameof(UserId))]
-    public User User { get; set; }
+    public User? User { get; set; }
 }

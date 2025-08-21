@@ -20,6 +20,13 @@ public class PlantService
     
     public async Task<Plant> GetPlantByIdAsync(int id)
     {
-        return await _context.Plants.FindAsync(id);
+        var plant = await _context.Plants.FindAsync(id);
+
+        if (plant == null)
+        {
+            throw new KeyNotFoundException($"Plant with ID {id} not found.");
+        }
+        
+        return plant;
     }
 }

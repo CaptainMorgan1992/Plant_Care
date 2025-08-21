@@ -5,20 +5,20 @@
 
 <MudPaper Class="plant-details-container mx-auto my-4" Elevation="0" Style="max-width:1000px;">
     <div class="image-container">
-        <img src="@plant?.ImageUrl" alt="@plant?.Name" class="plant-image" />
+        <img src="@Plant?.ImageUrl" alt="@Plant?.Name" class="plant-image" />
         <div class="image-fade"></div>
         <div class="plant-info-overlay">
             <MudText Typo="Typo.h3" Align="Align.Center" Class="plant-name">
-                @plant?.Name
+                @Plant?.Name
             </MudText>
         </div>
     </div>
     <div class="plant-details-below">
         <MudText Typo="Typo.subtitle2" Align="Align.Left" Class="plant-origin">
-            @plant?.Origin
+            @Plant?.Origin
         </MudText>
         <MudText Typo="Typo.body1" Class="mt-2">
-            @plant?.Description
+            @Plant?.Description
         </MudText>
     </div>
 </MudPaper>
@@ -26,13 +26,13 @@
 @code {
     
     [Parameter]
-    public int id { get; set; }
+    public int Id { get; set; }
 
-    private Plant plant;
+    public required Plant Plant;
 
     protected override async Task OnInitializedAsync()
     {
-        plant = await PlantService.GetPlantByIdAsync(id);
+        Plant = await PlantService.GetPlantByIdAsync(Id);
     }
     
 }

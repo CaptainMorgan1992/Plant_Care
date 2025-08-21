@@ -5,31 +5,35 @@
 @inject Services.UserPlantService UserPlantService
 @inject NavigationManager NavigationManager
 
-<MudText Typo="Typo.h5">
-    Household Plants
-</MudText>
-<div class="grid-layout-cards">
-    @foreach(var userplant in userPlants) {
-        <div style="flex: 1 1 300px; max-width: 300px">
-            <MudCard Class="m-2 rounded-3 d-flex" Width="300px" Style="height: 400px;">
-                <div class="image-container-relative">
-                    <MudCardMedia Image="@userplant.Plant.ImageUrl" Height="250" Class="object-fit-cover"/>
+<AuthorizeView>
+    <Authorized>
+        <MudText Typo="Typo.h5">
+            Household Plants
+        </MudText>
+        <div class="grid-layout-cards">
+            @foreach(var userplant in userPlants) {
+                <div style="flex: 1 1 300px; max-width: 300px">
+                    <MudCard Class="m-2 rounded-3 d-flex" Style="height: 400px;">
+                        <div class="image-container-relative">
+                            <MudCardMedia Image="@userplant.Plant.ImageUrl" Height="250" Class="object-fit-cover"/>
+                        </div>
+                        <MudCardContent Class="d-flex flex-column align-items-center justify-content-center gap-3">
+                            <MudText Typo="Typo.h5">
+                                @userplant.Plant.Name
+                            </MudText>
+                            <MudText Typo="Typo.body2">
+                                @Truncate(userplant.Plant.Description, 70)
+                            </MudText>
+                        </MudCardContent>
+                        <MudCardActions Class="d-flex align-items-center justify-content-center">
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => NavigateToPlantById(@userplant.Plant.Id))">Learn more</MudButton>
+                        </MudCardActions>
+                    </MudCard>
                 </div>
-                <MudCardContent Class="d-flex flex-column align-items-center justify-content-center gap-3">
-                    <MudText Typo="Typo.h5">
-                        @userplant.Plant.Name
-                    </MudText>
-                    <MudText Typo="Typo.body2">
-                        @Truncate(userplant.Plant.Description, 70)
-                    </MudText>
-                </MudCardContent>
-                <MudCardActions Class="d-flex align-items-center justify-content-center">
-                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => NavigateToPlantById(@userplant.Plant.Id))">Learn more</MudButton>
-                </MudCardActions>
-            </MudCard>
+            }
         </div>
-    }
-</div>
+    </Authorized>
+</AuthorizeView>
 
 @code {
 
