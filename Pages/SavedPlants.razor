@@ -33,13 +33,11 @@
 
 @code {
 
-    private List<UserPlant> userPlants = new List<UserPlant>();
+    private List<UserPlant> userPlants;
 
     protected override async Task OnInitializedAsync()
     {
-
         userPlants = await UserPlantService.GetUserPlantsAsync();
-
     }
     
     private string Truncate(string text, int maxLength)
