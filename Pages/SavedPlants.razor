@@ -1,20 +1,12 @@
 ﻿@page "/savedPlants"
-
+@using Auth0_Blazor.Models
+@inject ILogger<SavedPlants> Logger
 @inject Services.UserService UserService
 
-@*
-<h3>Din Auth0-användar-id:</h3>
-@if (UserId is null)
-{
-    <p>Du är inte inloggad.</p>
-}
-else
-{
-    <p>@UserId</p>
-}*@
+
 <AuthorizeView>
     <Authorized Context="authContext">
-        <p>@UserId</p>
+        @*<p>@UserId</p>*@
     </Authorized>
     <NotAuthorized>
         <p>Du är inte inloggad.</p>
@@ -22,10 +14,5 @@ else
 </AuthorizeView>
 
 @code {
-    private string? UserId;
 
-    protected override async Task OnInitializedAsync()
-    {
-        UserId = await UserService.GetUserIdAsync();
-    }
 }

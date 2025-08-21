@@ -12,6 +12,5 @@ public class User
     [MaxLength(70)]
     public string? Name { get; set; }
     
-    
     public List<UserPlant>? Plants { get; set; }
 }
