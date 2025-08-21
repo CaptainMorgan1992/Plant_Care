@@ -47,4 +47,21 @@ public class UserPlantService
 
         _logger.LogInformation("PlantId {PlantId} kopplades till UserId {UserId}.", plantId, userId.Value);
     }
+    
+    public async Task<List<UserPlant>> GetUserPlantsAsync()
+    {
+        var ownerId = await _userService.GetUserAuth0IdAsync();
+        var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
+
+        if (!userId.HasValue)
+        {
+            _logger.LogWarning("Ingen användare hittades för OwnerId {OwnerId}. Inga växter kan hämtas.", ownerId);
+            return new List<UserPlant>();
+        }
+
+        return await _db.UserPlants
+            .Where(up => up.UserId == userId.Value)
+            .Include(up => up.Plant)
+            .ToListAsync();
+    }
 }

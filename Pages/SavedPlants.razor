@@ -2,17 +2,55 @@
 @using Auth0_Blazor.Models
 @inject ILogger<SavedPlants> Logger
 @inject Services.UserService UserService
+@inject Services.UserPlantService UserPlantService
+@inject NavigationManager NavigationManager
 
-
-<AuthorizeView>
-    <Authorized Context="authContext">
-        @*<p>@UserId</p>*@
-    </Authorized>
-    <NotAuthorized>
-        <p>Du är inte inloggad.</p>
-    </NotAuthorized>
-</AuthorizeView>
+<MudText Typo="Typo.h5">
+    Household Plants
+</MudText>
+<div class="grid-layout-cards">
+    @foreach(var userplant in userPlants) {
+        <div style="flex: 1 1 300px; max-width: 300px">
+            <MudCard Class="m-2 rounded-3 d-flex" Width="300px" Style="height: 400px;">
+                <div class="image-container-relative">
+                    <MudCardMedia Image="@userplant.Plant.ImageUrl" Height="250" Class="object-fit-cover"/>
+                </div>
+                <MudCardContent Class="d-flex flex-column align-items-center justify-content-center gap-3">
+                    <MudText Typo="Typo.h5">
+                        @userplant.Plant.Name
+                    </MudText>
+                    <MudText Typo="Typo.body2">
+                        @Truncate(userplant.Plant.Description, 70)
+                    </MudText>
+                </MudCardContent>
+                <MudCardActions Class="d-flex align-items-center justify-content-center">
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => NavigateToPlantById(@userplant.Plant.Id))">Learn more</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </div>
+    }
+</div>
 
 @code {
 
+    private List<UserPlant> userPlants = new List<UserPlant>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        userPlants = await UserPlantService.GetUserPlantsAsync();
+
+    }
+    
+    private string Truncate(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+        return text.Length > maxLength ? text.Substring(0, maxLength) + "..." : text;
+    }
+        
+    private void NavigateToPlantById(int id)
+    {
+        NavigationManager.NavigateTo($"/plants/{id}");
+    }
+    
 }
