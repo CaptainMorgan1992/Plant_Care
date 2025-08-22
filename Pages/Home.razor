@@ -12,8 +12,8 @@
 
 <div class="grid-layout-cards">
     @foreach(var plant in Plants) {
-        <div style="flex: 1 1 300px; max-width: 300px">
-            <MudCard Class="m-2 rounded-3 d-flex" Style="height: 450px;">
+        <div class="card-wrapper">
+            <MudCard Class="m-2 rounded-3 d-flex plantcard">
                 <div class="image-container-relative">
                     <MudCardMedia Image="@plant.ImageUrl" Height="250" Class="object-fit-cover"/>
                     <AuthorizeView>
@@ -26,10 +26,10 @@
                     </AuthorizeView>
                 </div>
                 <MudCardContent Class="d-flex flex-column align-items-center justify-content-center gap-3">
-                    <MudText Typo="Typo.h5">
+                    <MudText Typo="Typo.h5" Color="Color.Primary">
                         @plant.Name
                     </MudText>
-                    <MudText Typo="Typo.body2">
+                    <MudText Typo="Typo.body2" Color="Color.Dark">
                         @Truncate(plant.Description, 70)
                     </MudText>
                 </MudCardContent>

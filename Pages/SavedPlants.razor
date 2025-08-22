@@ -20,7 +20,7 @@
                 }
                 {
                     <div style="flex: 1 1 300px; max-width: 300px">
-                        <MudCard Class="m-2 rounded-3 d-flex" Style="height: 450px;">
+                        <MudCard Class="m-2 rounded-3 d-flex plantcard">
                             <div class="image-container-relative">
                                 <MudCardMedia Image="@userplant.Plant.ImageUrl" Height="250" Class="object-fit-cover"/>
                             </div>
@@ -33,7 +33,7 @@
                                 </MudText>
                             </MudCardContent>
                             <MudCardActions Class="d-flex align-items-center justify-content-center ">
-                                <MudButton Variant="Variant.Text" Class="mb-3 green-text"
+                                <MudButton Variant="Variant.Text" Class="mb-3 green-text transparent-button"
                                            OnClick="@(() => NavigateToPlantById(@userplant.Plant.Id))">Learn more
                                 </MudButton>
                             </MudCardActions>

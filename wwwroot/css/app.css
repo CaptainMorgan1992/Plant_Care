@@ -1,4 +1,12 @@
-﻿.grid-layout-cards {
+﻿@font-face {
+    font-family: 'fontfile';
+    src: url('Fonts/Lexend-Medium.ttf') format('truetype');
+}
+.body {
+    scrollbar-color: #0e7a4a;
+}
+
+.grid-layout-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     column-gap: 24px;
@@ -26,6 +34,10 @@
     border-radius: 24px 24px 0 0;
 }
 
+.mud-card-media {
+    border-radius: 12px 12px 0 0;
+}
+
 .plant-image {
     position: absolute;
     left: 50%;
@@ -35,7 +47,7 @@
     object-fit: cover;
     display: block;
     transform: translateX(-50%);
-    border-radius: 24px 24px 0 0;
+    /*border-radius: 24px 24px 0 0;*/
 }
 
 .image-fade {
@@ -64,7 +76,6 @@
     font-weight: bold;
     background: none;
     border-radius: 0;
-    color: #235304;
 }
 
 .plant-details-below {
@@ -102,4 +113,51 @@
 .toggle-button svg {
     width: 30px !important;
     margin-right: 8px;
+}
+
+.transparent-button {
+    background-color: transparent !important;
+    border: none !important;
+    color: inherit !important;
+    padding: 0 !important;
+    cursor: pointer;
+}
+
+.mud-drawer::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0.7cm; /* 0.5 centimeter bred */
+    height: 100%;
+    background: linear-gradient(to right, #fff 0%, #ecf9ec 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.mud-drawer {
+    box-shadow: none !important;
+    top: 0 !important;
+}
+
+.mud-nav-item {
+    background-color: transparent !important;
+}
+
+.mud-nav-item a {
+    background-color: transparent !important;
+}
+
+.mud-nav-menu .mud-nav-item {
+    background-color: transparent !important;
+}
+
+.card-wrapper {
+    flex: 1 1 300px; 
+    max-width: 300px;
+}
+
+.plantcard {
+    border-radius: 12px !important;
+    height: 450px;
 }
