@@ -1,0 +1,22 @@
+# Build artifacts
+bin/
+obj/
+
+# Rider/VSCode/Visual Studio
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Logs
+*.log
+
+# Others
+*.DS_Store
