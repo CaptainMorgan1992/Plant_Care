@@ -29,6 +29,7 @@ builder.Services.AddMudServices();
 
 builder.Services.AddScoped<PlantService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<UtilityService>();
 builder.Services.AddScoped<UserPlantService>();
 
 builder.Services.AddRazorPages();

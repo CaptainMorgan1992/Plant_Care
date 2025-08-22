@@ -56,7 +56,7 @@
     
     private static string Truncate(string text, int maxLength)
     {
-        return PlantService.TruncateDescription(text, maxLength);
+        return UtilityService.TruncateText(text, maxLength);
     }
         
     private void NavigateToPlantById(int id)

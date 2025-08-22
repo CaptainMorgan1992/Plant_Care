@@ -30,9 +30,4 @@ public class PlantService
         return plant;
     }
     
-    public static string TruncateDescription(string text, int maxLength)
-    {
-        if (string.IsNullOrEmpty(text)) return text;
-        return text.Length > maxLength ? text.Substring(0, maxLength) + "..." : text;
-    }
 }
