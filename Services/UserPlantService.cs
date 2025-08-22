@@ -64,4 +64,17 @@ public class UserPlantService
             .Include(up => up.Plant)
             .ToListAsync();
     }
+    
+    public async Task<bool> UserHasPlantAsync(int plantId)
+    {
+        var ownerId = await _userService.GetUserAuth0IdAsync();
+        var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
+        return await _db.UserPlants
+            .AnyAsync(up => up.UserId == userId && up.PlantId == plantId);
+    }
+
+    /*public Task RemovePlantFromUserHouseholdAsync
+    {
+        
+    }*/
 }

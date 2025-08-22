@@ -19,10 +19,20 @@
                     <MudCardMedia Image="@plant.ImageUrl" Height="250" Class="object-fit-cover"/>
                     <AuthorizeView>
                         <Authorized>
-                            <MudButton Class="button-bottom-right"
-                                       OnClick="@(() => AddPlantToHouseHold(@plant.Id))">
-                                <AddSymbol/>
-                            </MudButton>
+                            @if (_ownerExists && _userPlantIds.Contains(plant.Id))
+                            {
+                                <MudButton Class="button-bottom-right">
+                                    <DeleteSymbol/>
+                                </MudButton>
+                            }
+                            else
+                            {
+                                <MudButton Class="button-bottom-right"
+                                           OnClick="@(() => AddPlantToHouseHold(@plant.Id))">
+                                    <AddSymbol/>
+                                </MudButton>
+                            }
+                            
                         </Authorized>
                     </AuthorizeView>
                 </div>
@@ -45,10 +55,28 @@
 
 @code {
     public required List<Plant> Plants;
+    private HashSet<int> _userPlantIds = new();
+    private bool _ownerExists = false;
 
     protected override async Task OnInitializedAsync()
     {
+        
         Plants = await PlantService.GetAllPlantsAsync();
+        var ownerId = await UserService.GetUserAuth0IdAsync();
+        var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
+
+        // Kolla om ownerId finns i databasen
+        _ownerExists = userId.HasValue;
+
+        if (_ownerExists)
+        {
+            var userPlants = await UserPlantService.GetUserPlantsAsync();
+            _userPlantIds = userPlants.Select(up => up.PlantId).ToHashSet();
+        }
+        else
+        {
+            _userPlantIds.Clear();
+        }
     }
         
     private static string Truncate(string text, int maxLength)
@@ -65,4 +93,15 @@
     {
         await UserPlantService.AddPlantToUserHouseholdAsync(plantId);
     }
+    
+    /*private void RemovePlantFromHousehold(int plantId)
+    {
+        UserPlantService.RemovePlantFromHousehold(plantId);
+    }*/
+    
+    /*
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }*/
 }
