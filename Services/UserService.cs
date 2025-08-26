@@ -32,7 +32,7 @@ public class UserService
         if (string.IsNullOrWhiteSpace(userId))
         {
             _logger.LogError("UserId is missing. Throwing exception.");
-            throw new InvalidOperationException("UserId could not be found for the current user.");
+            return null;
         }
         
         return userId;

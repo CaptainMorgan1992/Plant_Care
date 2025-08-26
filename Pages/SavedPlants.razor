@@ -1,6 +1,7 @@
 ﻿@page "/savedPlants"
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Services
+@using Auth0_Blazor.Icons
 @inject ILogger<SavedPlants> Logger
 @inject Services.UserService UserService
 @inject Services.UserPlantService UserPlantService
@@ -23,6 +24,10 @@
                         <MudCard Class="m-2 rounded-3 d-flex plantcard">
                             <div class="image-container-relative">
                                 <MudCardMedia Image="@userplant.Plant.ImageUrl" Height="250" Class="object-fit-cover"/>
+                                <MudButton Class="button-bottom-right"
+                                           OnClick="@(() => RemovePlantFromHousehold(@userplant.Plant.Id))">
+                                        <DeleteSymbol/>
+                                    </MudButton>
                             </div>
                             <MudCardContent Class="d-flex flex-column align-items-center justify-content-center gap-3">
                                 <MudText Typo="Typo.h5">
@@ -62,6 +67,20 @@
     private void NavigateToPlantById(int id)
     {
         NavigationManager.NavigateTo($"/plants/{id}");
+    }
+    
+    private async Task RemovePlantFromHousehold(int plantId)
+    {
+        await UserPlantService.RemovePlantFromUserHouseholdAsync(plantId);
+        
+        // Remove from local list
+        var plantToRemove = UserPlants.FirstOrDefault(p => p.Id == plantId);
+        if (plantToRemove != null)
+            UserPlants.Remove(plantToRemove);
+        
+        Logger.LogInformation("UserPlants count after removal: {Count}, Ids: {Ids}", 
+            UserPlants.Count, 
+            string.Join(", ", UserPlants.Select(p => p.Id)));
     }
     
 }
