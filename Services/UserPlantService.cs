@@ -73,8 +73,25 @@ public class UserPlantService
             .AnyAsync(up => up.UserId == userId && up.PlantId == plantId);
     }
 
-    /*public Task RemovePlantFromUserHouseholdAsync
+    public async Task RemovePlantFromUserHouseholdAsync(int plantId)
     {
+        var ownerId = await _userService.GetUserAuth0IdAsync();
+        var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
         
-    }*/
+        // Search for the first matching UserPlant entry.
+        // This is a 'LINQ' and entity framework transfers this automaticlally to SQL.
+        var userPlant = await _db.UserPlants
+            .FirstOrDefaultAsync(up => up.UserId == userId && up.PlantId == plantId);
+
+        if (userPlant != null)
+        {
+            _db.UserPlants.Remove(userPlant);
+            await _db.SaveChangesAsync();
+            _logger.LogInformation("PlantId {PlantId} has been deleted from user.", plantId);
+        }
+        else
+        {
+            _logger.LogInformation("PlantId {PlantId} has not been deleted from user. UserPlant {userPlant} cannot be found.", plantId, userPlant);
+        }
+    }
 }

@@ -21,7 +21,8 @@
                         <Authorized>
                             @if (_ownerExists && _userPlantIds.Contains(plant.Id))
                             {
-                                <MudButton Class="button-bottom-right">
+                                <MudButton Class="button-bottom-right"
+                                           OnClick="@(() => RemovePlantFromHousehold(@plant.Id))">
                                     <DeleteSymbol/>
                                 </MudButton>
                             }
@@ -64,8 +65,7 @@
         Plants = await PlantService.GetAllPlantsAsync();
         var ownerId = await UserService.GetUserAuth0IdAsync();
         var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
-
-        // Kolla om ownerId finns i databasen
+        
         _ownerExists = userId.HasValue;
 
         if (_ownerExists)
@@ -94,14 +94,9 @@
         await UserPlantService.AddPlantToUserHouseholdAsync(plantId);
     }
     
-    /*private void RemovePlantFromHousehold(int plantId)
+    private async Task RemovePlantFromHousehold(int plantId)
     {
-        UserPlantService.RemovePlantFromHousehold(plantId);
-    }*/
-    
-    /*
-    protected override async Task OnInitializedAsync()
-    {
-        
-    }*/
+        await UserPlantService.RemovePlantFromUserHouseholdAsync(plantId);
+    }
+
 }
