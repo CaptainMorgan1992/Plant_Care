@@ -24,7 +24,8 @@
                         <MudCard Class="m-2 rounded-3 d-flex plantcard">
                             <div class="image-container-relative">
                                 <MudCardMedia Image="@userplant.Plant.ImageUrl" Height="250" Class="object-fit-cover"/>
-                                    <MudButton Class="button-bottom-right">
+                                <MudButton Class="button-bottom-right"
+                                           OnClick="@(() => RemovePlantFromHousehold(@userplant.Plant.Id))">
                                         <DeleteSymbol/>
                                     </MudButton>
                             </div>
@@ -66,6 +67,11 @@
     private void NavigateToPlantById(int id)
     {
         NavigationManager.NavigateTo($"/plants/{id}");
+    }
+    
+    private async Task RemovePlantFromHousehold(int plantId)
+    {
+        await UserPlantService.RemovePlantFromUserHouseholdAsync(plantId);
     }
     
 }
