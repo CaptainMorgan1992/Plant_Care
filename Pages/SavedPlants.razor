@@ -72,6 +72,15 @@
     private async Task RemovePlantFromHousehold(int plantId)
     {
         await UserPlantService.RemovePlantFromUserHouseholdAsync(plantId);
+        
+        // Remove from local list
+        var plantToRemove = UserPlants.FirstOrDefault(p => p.Id == plantId);
+        if (plantToRemove != null)
+            UserPlants.Remove(plantToRemove);
+        
+        Logger.LogInformation("UserPlants count after removal: {Count}, Ids: {Ids}", 
+            UserPlants.Count, 
+            string.Join(", ", UserPlants.Select(p => p.Id)));
     }
     
 }
