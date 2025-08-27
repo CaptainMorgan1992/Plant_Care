@@ -1,0 +1,78 @@
+﻿@page "/search"
+@using Auth0_Blazor.Services
+@using Auth0_Blazor.Models
+@using MudBlazor
+@inject PlantService PlantService
+@inject UtilityService UtilityService
+@inject NavigationManager NavigationManager
+
+
+<MudText Typo="Typo.h4" Class="mb-4">Search by name</MudText>
+<MudItem Class="d-flex align-items-center justify-content-center flex-column mb-4">
+    <MudTextField @bind-value="@_searchTerm" 
+                  Class="mb-2" 
+                  AdornmentColor="Color.Primary" 
+                  Label="Enter plant name" 
+                  Variant="Variant.Filled" 
+                  Adornment="Adornment.Start"></MudTextField>
+    <MudButton OnClick="@(() => SearchPlants())" Color="Color.Dark">Search</MudButton>
+</MudItem>
+
+<div class="grid-layout-cards">
+    @foreach(var plant in FilteredPlants) {
+        <div class="card-wrapper">
+            <MudCard Class="m-2 rounded-3 d-flex plantcard">
+                <div class="image-container-relative">
+                    <MudCardMedia Image="@plant.ImageUrl" Height="250" Class="object-fit-cover"/>
+                </div>
+                <MudCardContent Class="d-flex flex-column align-items-center justify-content-center gap-3">
+                    <MudText Typo="Typo.h5" Color="Color.Primary">
+                        @plant.Name
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Dark">
+                        @Truncate(plant.Description, 70)
+                    </MudText>
+                </MudCardContent>
+                <MudCardActions Class="d-flex align-items-center justify-content-center">
+                    <MudButton Variant="Variant.Text" Class="mb-3 green-text"
+                               OnClick="@(() => NavigateToPlantById(@plant.Id))">Learn more</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </div>
+    }
+</div>
+
+@code {
+    private string _searchTerm = "";
+    public required List<Plant> FilteredPlants = new();
+    public required List<Plant> Plants = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Plants = await PlantService.GetAllPlantsAsync();
+        FilteredPlants = new List<Plant>();
+    }
+    private static string Truncate(string text, int maxLength)
+    {
+        return UtilityService.TruncateText(text, maxLength);
+    }
+        
+    private void NavigateToPlantById(int id)
+    {
+        NavigationManager.NavigateTo($"/plants/{id}");
+    }
+    
+    private void SearchPlants()
+    {
+        if (!string.IsNullOrWhiteSpace(_searchTerm) && _searchTerm.Length >= 3)
+        {
+            FilteredPlants = Plants
+                .Where(p => p.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+        else
+        {
+            FilteredPlants = new List<Plant>(); // Show nothing if search is empty
+        }
+    }
+}

@@ -7,7 +7,10 @@
 
 <MudNavMenu Rounded="true" Margin="Margin.Normal" Color="Color.Secondary" Class="pa-2">
     <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.All" Href="/search" Icon="@Icons.Material.Filled.Search">
+        Search
+    </MudNavLink>
+    @*<MudNavLink Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>*@
     
     <AuthorizeView>
         <Authorized>
