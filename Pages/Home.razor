@@ -58,6 +58,7 @@
     public required List<Plant> Plants;
     private HashSet<int> _userPlantIds = new();
     private bool _ownerExists = false;
+    public List<UserPlant> UserPlants = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,13 +71,17 @@
 
         if (_ownerExists)
         {
-            var userPlants = await UserPlantService.GetUserPlantsAsync();
-            _userPlantIds = userPlants.Select(up => up.PlantId).ToHashSet();
+            await UpdateUserPlantsStateAsync();
         }
         else
         {
             _userPlantIds.Clear();
         }
+    }
+
+    private static HashSet<int> UserPlantsToHashSet(List<UserPlant> userPlants)
+    {
+        return userPlants.Select(up => up.PlantId).ToHashSet();
     }
         
     private static string Truncate(string text, int maxLength)
@@ -92,11 +97,20 @@
     private async Task AddPlantToHouseHold(int plantId)
     {
         await UserPlantService.AddPlantToUserHouseholdAsync(plantId);
+        await UpdateUserPlantsStateAsync();
     }
     
     private async Task RemovePlantFromHousehold(int plantId)
     {
         await UserPlantService.RemovePlantFromUserHouseholdAsync(plantId);
+        await UpdateUserPlantsStateAsync();
+    }
+
+    private async Task UpdateUserPlantsStateAsync()
+    {
+        UserPlants = await UserPlantService.GetUserPlantsAsync();
+        _userPlantIds = UserPlantsToHashSet(UserPlants);
+        await InvokeAsync(StateHasChanged);
     }
 
 }
