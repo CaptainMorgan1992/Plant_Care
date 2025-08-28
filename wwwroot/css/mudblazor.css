@@ -3,7 +3,7 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 0.7cm; /* 0.5 centimeter bred */
+    width: 1cm; 
     height: 100%;
     background: linear-gradient(to right, #fff 0%, #ecf9ec 100%);
     pointer-events: none;
@@ -12,7 +12,6 @@
 
 .mud-drawer {
     box-shadow: none !important;
-    top: 0 !important;
 }
 
 .mud-nav-item {
@@ -30,6 +29,7 @@
 .mud-nav-link .mud-nav-link-text:hover {
     color: #0f5132 !important;
 }
+
 .mud-navmenu.mud-navmenu-rounded .mud-nav-link:hover {
     color: #0f5132 !important;
 }
@@ -37,3 +37,8 @@
 .mud-card-media {
     border-radius: 12px 12px 0 0;
 }
+
+.mud-drawer:not(.mud-drawer-fixed) {
+    position: fixed !important;
+}
+

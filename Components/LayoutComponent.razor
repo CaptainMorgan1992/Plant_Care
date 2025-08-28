@@ -1,8 +1,8 @@
 ﻿@namespace Components
 @using Auth0_Blazor.Icons
 
-<MudDrawerContainer Style="height:100vh">
-    <MudDrawer @bind-Open="@_openStart" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
+<MudDrawerContainer Class="test-box">
+    <MudDrawer @bind-Open="@_openStart" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent" Fixed="true">
         <NavigationDrawer/>
     </MudDrawer>
 
