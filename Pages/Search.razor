@@ -4,6 +4,7 @@
 @using Auth0_Blazor.Icons
 @using MudBlazor
 @inject PlantService PlantService
+@inject UserService UserService
 @inject UserPlantService UserPlantService
 @inject UtilityService UtilityService
 @inject NavigationManager NavigationManager
@@ -75,7 +76,22 @@
     {
         Plants = await PlantService.GetAllPlantsAsync();
         FilteredPlants = new List<Plant>();
+        
+        var ownerId = await UserService.GetUserAuth0IdAsync();
+        var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
+        
+        _ownerExists = userId.HasValue;
+
+        if (_ownerExists)
+        {
+            await UpdateUserPlantsStateAsync();
+        }
+        else
+        {
+            _userPlantIds.Clear();
+        }
     }
+    
     private static string Truncate(string text, int maxLength)
     {
         return UtilityService.TruncateText(text, maxLength);
