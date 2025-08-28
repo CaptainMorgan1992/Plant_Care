@@ -94,4 +94,47 @@ public class UserPlantService
             _logger.LogInformation("PlantId {PlantId} has not been deleted from user. UserPlant {userPlant} cannot be found.", plantId, userPlant);
         }
     }
+    public async Task<List<UserPlant>> GetTop6UserPlantsAsync()
+    {
+        // Get the most saved PlantIds (grouped and ordered by count)
+        var topPlantIds = await _db.UserPlants
+            .GroupBy(up => up.PlantId)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
+            .Take(6)
+            .ToListAsync();
+
+        // Get UserPlant entries for these PlantIds (one per PlantId)
+        var topUserPlants = await _db.UserPlants
+            .Where(up => topPlantIds.Contains(up.PlantId))
+            .Include(up => up.Plant)
+            .GroupBy(up => up.PlantId)
+            .Select(g => g.First())
+            .ToListAsync();
+
+        if (topUserPlants.Count < 6)
+        {
+            var existingPlantIds = topUserPlants.Select(up => up.PlantId).ToHashSet();
+            var remainingPlants = await _db.Plants
+                .Where(p => !existingPlantIds.Contains(p.Id))
+                .ToListAsync();
+
+            var randomPlants = remainingPlants
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(6 - topUserPlants.Count)
+                .ToList();
+
+            foreach (var plant in randomPlants)
+            {
+                topUserPlants.Add(new UserPlant
+                {
+                    PlantId = plant.Id,
+                    Plant = plant,
+                    UserId = 0
+                });
+            }
+        }
+
+        return topUserPlants;
+    }
 }

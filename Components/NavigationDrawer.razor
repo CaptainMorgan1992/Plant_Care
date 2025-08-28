@@ -7,6 +7,7 @@
 
 <MudNavMenu Rounded="true" Margin="Margin.Normal" Color="Color.Secondary" Class="pa-2">
     
+    <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <AuthorizeView>
         <Authorized>
             <MudNavLink Icon="@Icons.Material.Filled.Person" Class="nav-item px-3">
@@ -24,8 +25,7 @@
             </MudNavLink>
         </NotAuthorized>
     </AuthorizeView>
-    
-    <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+  
     <MudNavLink Match="NavLinkMatch.All" Href="/search" Icon="@Icons.Material.Filled.Search">
         Search
     </MudNavLink>
@@ -37,35 +37,13 @@
         </Authorized>
     </AuthorizeView>
     
-    @*<MudNavLink Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>*@
-
-
 </MudNavMenu>
 
 
 @code {
     
-    private string? currentUrl;
-    
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
-
-    protected override void OnInitialized()
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
-    }
-
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-    }
     
     private static string Truncate(string text, int maxLength)
     {

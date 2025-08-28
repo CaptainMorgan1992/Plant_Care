@@ -15,7 +15,7 @@
     </div>
     <div class="plant-details-below">
         <MudText Typo="Typo.subtitle2" Align="Align.Left" Class="plant-origin">
-            @Plant?.Origin
+            Origin: @Plant?.Origin
         </MudText>
         <MudText Typo="Typo.body1" Class="mt-2">
             @Plant?.Description
@@ -27,7 +27,6 @@
     
     [Parameter]
     public int Id { get; set; }
-
     public required Plant Plant;
 
     protected override async Task OnInitializedAsync()
