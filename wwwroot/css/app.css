@@ -2,6 +2,7 @@
     font-family: 'fontfile';
     src: url('Fonts/Lexend-Medium.ttf') format('truetype');
 }
+
 .body {
     scrollbar-color: #0e7a4a;
 }
@@ -34,10 +35,6 @@
     border-radius: 24px 24px 0 0;
 }
 
-.mud-card-media {
-    border-radius: 12px 12px 0 0;
-}
-
 .plant-image {
     position: absolute;
     left: 50%;
@@ -47,7 +44,6 @@
     object-fit: cover;
     display: block;
     transform: translateX(-50%);
-    /*border-radius: 24px 24px 0 0;*/
 }
 
 .image-fade {
@@ -62,7 +58,7 @@
 
 .plant-info-overlay {
     position: absolute;
-    bottom: 10px; /* Name placed even further down */
+    bottom: 10px;
     left: 0;
     width: 100%;
     display: flex;
@@ -121,35 +117,6 @@
     color: inherit !important;
     padding: 0 !important;
     cursor: pointer;
-}
-
-.mud-drawer::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 0.7cm; /* 0.5 centimeter bred */
-    height: 100%;
-    background: linear-gradient(to right, #fff 0%, #ecf9ec 100%);
-    pointer-events: none;
-    z-index: 2;
-}
-
-.mud-drawer {
-    box-shadow: none !important;
-    top: 0 !important;
-}
-
-.mud-nav-item {
-    background-color: transparent !important;
-}
-
-.mud-nav-item a {
-    background-color: transparent !important;
-}
-
-.mud-nav-menu .mud-nav-item {
-    background-color: transparent !important;
 }
 
 .card-wrapper {

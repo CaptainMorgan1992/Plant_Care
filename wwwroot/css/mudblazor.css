@@ -1,0 +1,39 @@
+﻿.mud-drawer::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0.7cm; /* 0.5 centimeter bred */
+    height: 100%;
+    background: linear-gradient(to right, #fff 0%, #ecf9ec 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.mud-drawer {
+    box-shadow: none !important;
+    top: 0 !important;
+}
+
+.mud-nav-item {
+    background-color: transparent !important;
+}
+
+.mud-nav-item a {
+    background-color: transparent !important;
+}
+
+.mud-nav-menu .mud-nav-item {
+    background-color: transparent !important;
+}
+
+.mud-nav-link .mud-nav-link-text:hover {
+    color: #0f5132 !important;
+}
+.mud-navmenu.mud-navmenu-rounded .mud-nav-link:hover {
+    color: #0f5132 !important;
+}
+
+.mud-card-media {
+    border-radius: 12px 12px 0 0;
+}

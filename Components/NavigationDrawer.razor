@@ -6,21 +6,16 @@
 @namespace Components
 
 <MudNavMenu Rounded="true" Margin="Margin.Normal" Color="Color.Secondary" Class="pa-2">
-    <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Match="NavLinkMatch.All" Href="/search" Icon="@Icons.Material.Filled.Search">
-        Search
-    </MudNavLink>
-    @*<MudNavLink Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>*@
     
     <AuthorizeView>
         <Authorized>
-            <MudNavLink Href="/savedPlants" Icon="@Icons.Material.Filled.Person" Class="nav-item px-3">
+            <MudNavLink Icon="@Icons.Material.Filled.Person" Class="nav-item px-3">
                 @Truncate(context.User.Identity?.Name, 16)
             </MudNavLink>
             <MudNavLink Class="nav-item px-3">
-                    <MudButton Href="/logout" Variant="Variant.Text" Color="Color.Primary" Class="nav-link">
-                        <MudIcon Icon="@Icons.Material.Filled.Logout" /> Logout
-                    </MudButton>
+                <MudButton Href="/logout" Variant="Variant.Text" Color="Color.Primary" Class="nav-link">
+                    <MudIcon Icon="@Icons.Material.Filled.Logout" /> Logout
+                </MudButton>
             </MudNavLink>
         </Authorized>
         <NotAuthorized>
@@ -29,6 +24,22 @@
             </MudNavLink>
         </NotAuthorized>
     </AuthorizeView>
+    
+    <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.All" Href="/search" Icon="@Icons.Material.Filled.Search">
+        Search
+    </MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Match="NavLinkMatch.All" Href="/savedPlants" Icon="@Icons.Material.Filled.Spa">
+                Saved plants
+            </MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+    
+    @*<MudNavLink Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>*@
+
+
 </MudNavMenu>
 
 
