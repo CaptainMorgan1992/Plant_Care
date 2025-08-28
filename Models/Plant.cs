@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Auth0_Blazor.Enums;
 
 namespace Auth0_Blazor.Models;
 
@@ -17,4 +18,6 @@ public class Plant
     
     [MaxLength(50)]
     public string? Origin { get; set; }
+    
+    public required WaterFrequency WaterFrequency { get; set; } // in days
 }
