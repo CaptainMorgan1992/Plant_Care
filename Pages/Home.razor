@@ -16,7 +16,7 @@
         <div class="card-wrapper">
             <MudCard Class="m-2 rounded-3 d-flex plantcard">
                 <div class="image-container-relative">
-                    <MudCardMedia Image="@plant.Plant?.ImageUrl" Height="250" Class="object-fit-cover"/>
+                    <MudCardMedia Image="@plant.ImageUrl" Height="250" Class="object-fit-cover"/>
                     <AuthorizeView>
                         <Authorized>
                             @if (_ownerExists && _userPlantIds.Contains(plant.Id))
@@ -39,10 +39,10 @@
                 </div>
                 <MudCardContent Class="d-flex flex-column align-items-center justify-content-center gap-3">
                     <MudText Typo="Typo.h5" Color="Color.Primary">
-                        @plant.Plant?.Name
+                        @plant.Name
                     </MudText>
                     <MudText Typo="Typo.body2" Color="Color.Dark">
-                        @Truncate(plant.Plant?.Description, 70)
+                        @Truncate(plant.Description, 70)
                     </MudText>
                 </MudCardContent>
                 <MudCardActions Class="d-flex align-items-center justify-content-center">
@@ -55,7 +55,7 @@
 </div>
 
 @code {
-    public required List<UserPlant> Plants;
+    public required List<Plant> Plants;
     private HashSet<int> _userPlantIds = new();
     private bool _ownerExists = false;
     private List<UserPlant> _userPlants = new();
@@ -63,7 +63,8 @@
     protected override async Task OnInitializedAsync()
     {
         
-        Plants = await UserPlantService.GetTop6UserPlantsAsync();
+        /*Plants = await UserPlantService.GetTop6UserPlantsAsync();*/
+        Plants = await PlantService.GetAllPlantsAsync();
         var ownerId = await UserService.GetUserAuth0IdAsync();
         var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
         
