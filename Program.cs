@@ -3,6 +3,7 @@ using Auth0_Blazor.Jobs;
 using Auth0_Blazor.Models;
 using Auth0_Blazor.Services;
 using Auth0.AspNetCore.Authentication;
+using Fluxor;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Quartz;
@@ -62,6 +63,12 @@ builder.Services.AddQuartz(q =>
         .WithSimpleSchedule(x => x
             .WithIntervalInSeconds(20)
             .RepeatForever()));
+});
+
+builder.Services.AddFluxor(options =>
+{
+    options.ScanAssemblies(typeof(Program).Assembly);
+    // options.UseRouting(); // valfritt
 });
 
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);

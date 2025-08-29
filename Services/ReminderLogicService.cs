@@ -39,7 +39,7 @@ public class ReminderLogicService
 
     private async Task<List<string>> FetchPlantsForWatering( WaterFrequency frequency)
     {
-        var userPlants = await _userPlantService.GetUserPlantsAsync();
+        var userPlants = await _userPlantService.GetAllUserPlantsByIdAsync();
         var plantNames = userPlants.Where(up => up.Plant != null && up.Plant.WaterFrequency == frequency)
             .Select(up => up.Plant!.Name)
             .ToList();

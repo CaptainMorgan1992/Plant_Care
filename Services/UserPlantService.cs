@@ -1,5 +1,7 @@
 ﻿using Auth0_Blazor.Data;
+using Auth0_Blazor.FluxorState;
 using Auth0_Blazor.Models;
+using Fluxor;
 using Microsoft.EntityFrameworkCore;
 
 namespace Auth0_Blazor.Services;
@@ -9,12 +11,18 @@ public class UserPlantService
     private readonly ApplicationDbContext _db;
     private readonly UserService _userService;
     private readonly ILogger<UserPlantService> _logger;
+    private readonly IState<UserState> _userState;
 
-    public UserPlantService (ApplicationDbContext db, UserService userService, ILogger<UserPlantService> logger)
+    public UserPlantService (
+        ApplicationDbContext db,
+        UserService userService,
+        ILogger<UserPlantService> logger,
+        IState<UserState> userState)
     {
         _db = db;
         _userService = userService;
         _logger = logger;
+        _userState = userState;
     }
     
     public async Task AddPlantToUserHouseholdAsync(int plantId)
@@ -46,6 +54,28 @@ public class UserPlantService
         await _db.SaveChangesAsync();
 
         _logger.LogInformation("PlantId {PlantId} kopplades till UserId {UserId}.", plantId, userId.Value);
+    }
+
+    public async Task<List<UserPlant>> GetAllUserPlantsByIdAsync()
+    {
+        var auth0UserId = _userState.Value.UserId;
+        
+        var user = await _db.Users
+            .FirstOrDefaultAsync(u => u.OwnerId == auth0UserId);
+
+        if (user == null) return new List<UserPlant>(); 
+
+        var internalUserId = user.Id;
+        
+        _logger.LogInformation("Fetching plants for internal UserId {InternalUserId}.", internalUserId);
+        
+        var userPlants = await _db.UserPlants
+            .Include(up => up.Plant)
+            .Where(up => up.UserId == internalUserId)
+            .ToListAsync();
+
+        _logger.LogInformation("Found {Count} plants for UserId {InternalUserId}.", userPlants.Count, internalUserId);
+        return userPlants;
     }
     
     public async Task<List<UserPlant>> GetUserPlantsAsync()

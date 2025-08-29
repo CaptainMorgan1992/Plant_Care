@@ -1,11 +1,11 @@
-﻿using Auth0_Blazor.Services;
+﻿/*using Auth0_Blazor.Services;
 using Quartz;
 
 namespace Auth0_Blazor.Jobs;
 
 /*
  * This class handles what the job is doing when it is triggered.
- */
+ #1#
 public class NotificationJob : IJob
 {
     private readonly NotificationService _notificationService;
@@ -20,4 +20,4 @@ public class NotificationJob : IJob
         _notificationService.ShowNotificiation("This is a scheduled notification every 10th second.");
         return Task.CompletedTask;
     }
-}
+}*/
