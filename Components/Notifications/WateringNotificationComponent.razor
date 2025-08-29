@@ -1,0 +1,39 @@
+﻿@using Auth0_Blazor.Services
+@inject NotificationService NotificationService
+@namespace Components
+
+
+@foreach (var name in plantNames)
+{
+    <div style="position:fixed;top:16px;right:16px;z-index:9999;padding:12px 24px;background:#2196f3;color:white;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15); margin-bottom:8px;">
+        Time to water @name!
+    </div>
+}
+
+@code {
+    private List<string> plantNames = new List<string>();
+    
+    protected override void OnInitialized()
+    {
+        NotificationService.OnWateringNotify += Show;
+    }
+    
+    private async void Show(string plantName)
+    {
+        await InvokeAsync(() => {
+            plantNames.Add(plantName);
+            InvokeAsync(StateHasChanged);
+        });
+        // Optionally hide after x seconds
+        await Task.Delay(5000); // Adjust the delay as needed
+        await InvokeAsync(() => {
+            plantNames.Remove(plantName);
+            StateHasChanged();
+        });
+    }
+    
+    public void Dispose()
+    {
+        NotificationService.OnWateringNotify -= Show;
+    }
+}

@@ -3,6 +3,9 @@ using Quartz;
 
 namespace Auth0_Blazor.Jobs;
 
+/*
+ * This class handles what the job is doing when it is triggered.
+ */
 public class NotificationJob : IJob
 {
     private readonly NotificationService _notificationService;

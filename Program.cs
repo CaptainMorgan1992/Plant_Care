@@ -38,17 +38,29 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenProvider>();
 builder.Services.AddSingleton<NotificationService>();
+builder.Services.AddScoped<ReminderLogicService>();
 
+// This part is responsible for _when_ the job is executing
 builder.Services.AddQuartz(q =>
 {
-    /*q.UseMicrosoftDependencyInjectionJobFactory();*/
-    var jobKey = new JobKey("NotificationJob");
-    q.AddJob<NotificationJob>(opts => opts.WithIdentity(jobKey));
+    // Remove or comment out NotificationJob registration:
+    // var jobKey = new JobKey("NotificationJob");
+    // q.AddJob<NotificationJob>(opts => opts.WithIdentity(jobKey));
+    // q.AddTrigger(opts => opts
+    //     .ForJob(jobKey)
+    //     .WithIdentity("NotificationJob-trigger")
+    //     .WithSimpleSchedule(x => x
+    //         .WithIntervalInSeconds(20)
+    //         .RepeatForever()));
+
+    // Add WateringNotificationJob registration:
+    var wateringJobKey = new JobKey("WateringNotificationJob");
+    q.AddJob<WateringNotificationJob>(opts => opts.WithIdentity(wateringJobKey));
     q.AddTrigger(opts => opts
-        .ForJob(jobKey)
-        .WithIdentity("NotificationJob-trigger")
+        .ForJob(wateringJobKey)
+        .WithIdentity("WateringNotificationJob-trigger")
         .WithSimpleSchedule(x => x
-            .WithIntervalInSeconds(10)
+            .WithIntervalInSeconds(20)
             .RepeatForever()));
 });
 
