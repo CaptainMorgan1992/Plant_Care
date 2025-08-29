@@ -2,7 +2,7 @@
 
 public enum WaterFrequency
 {
-    Seldom = 1,   // Once per month
+    Low = 1,   // Once per month
     Normal = 2,   // Twice per month
-    Often = 3     // Once per week
+    High = 3     // Once per week
 }

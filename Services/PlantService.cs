@@ -2,6 +2,7 @@
 using Auth0_Blazor.Models;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace Auth0_Blazor.Services;
 
 public class PlantService

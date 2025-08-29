@@ -1,9 +1,11 @@
 ﻿using Auth0_Blazor.Data;
+using Auth0_Blazor.Jobs;
 using Auth0_Blazor.Models;
 using Auth0_Blazor.Services;
 using Auth0.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +37,22 @@ builder.Services.AddScoped<UserPlantService>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenProvider>();
+builder.Services.AddSingleton<NotificationService>();
+
+builder.Services.AddQuartz(q =>
+{
+    /*q.UseMicrosoftDependencyInjectionJobFactory();*/
+    var jobKey = new JobKey("NotificationJob");
+    q.AddJob<NotificationJob>(opts => opts.WithIdentity(jobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("NotificationJob-trigger")
+        .WithSimpleSchedule(x => x
+            .WithIntervalInSeconds(10)
+            .RepeatForever()));
+});
+
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 var app = builder.Build();
 
