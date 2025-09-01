@@ -1,7 +1,5 @@
 ﻿using Auth0_Blazor.Data;
-using Auth0_Blazor.FluxorState;
 using Auth0_Blazor.Models;
-using Fluxor;
 using Microsoft.EntityFrameworkCore;
 
 namespace Auth0_Blazor.Services;
@@ -11,18 +9,18 @@ public class UserPlantService
     private readonly ApplicationDbContext _db;
     private readonly UserService _userService;
     private readonly ILogger<UserPlantService> _logger;
-    private readonly IState<UserState> _userState;
+    private readonly UserStateService _userStateService;
 
     public UserPlantService (
         ApplicationDbContext db,
         UserService userService,
         ILogger<UserPlantService> logger,
-        IState<UserState> userState)
+        UserStateService userStateService)
     {
         _db = db;
         _userService = userService;
         _logger = logger;
-        _userState = userState;
+        _userStateService = userStateService;
     }
     
     public async Task AddPlantToUserHouseholdAsync(int plantId)
@@ -58,7 +56,8 @@ public class UserPlantService
 
     public async Task<List<UserPlant>> GetAllUserPlantsByIdAsync()
     {
-        var auth0UserId = _userState.Value.OwnerId;
+        /*var auth0UserId = _userState.Value.OwnerId;*/
+        var auth0UserId = _userStateService.GetOwnerId();
         /*_logger.LogInformation("Fetching userId {authOUserId}.", auth0UserId);*/
         var user = await _db.Users
             .FirstOrDefaultAsync(u => u.OwnerId == auth0UserId);

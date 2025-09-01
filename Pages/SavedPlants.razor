@@ -2,13 +2,11 @@
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Icons
-@using Fluxor
 @inject ILogger<SavedPlants> Logger
 @inject Services.UserService UserService
 @inject Services.UserPlantService UserPlantService
 @inject PlantService PlantService
 @inject NavigationManager NavigationManager
-@inject IState<UserState> UserState
 
 <AuthorizeView>
     <Authorized>
@@ -59,8 +57,6 @@
     protected override async Task OnInitializedAsync()
     {
         UserPlants = await UserPlantService.GetUserPlantsAsync();
-        var ownerIdAfterStateChange = UserState.Value.OwnerId;
-        Logger.LogInformation("SavedPlants initialized with OwnerId: {ownerId}", ownerIdAfterStateChange);
     }
     
     private static string Truncate(string text, int maxLength)

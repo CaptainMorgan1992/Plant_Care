@@ -2,15 +2,15 @@
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Icons
+@using Auth0_Blazor.Records
 @inject PlantService PlantService
 @inject NavigationManager NavigationManager
 @inject ILogger<Home> Logger
 @inject UserPlantService UserPlantService
 @inject UserService UserService
 @inject UtilityService UtilityService
-@inject IDispatcher Dispatcher
 @inject AuthenticationStateProvider AuthStateProvider
-@inject IState<UserState> UserState
+@inject UserStateService UserStateService
 
 <PageTitle>Home</PageTitle>
 
@@ -72,8 +72,7 @@
         var ownerId = await UserService.GetUserAuth0IdAsync();
         var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
 
-        Dispatcher.Dispatch(new SetOwnerIdAction(ownerId));
-        /*var ownerIdAfterStateChange = UserState.Value.OwnerId;*/
+        UserStateService.SetOwnerId(ownerId);
         
         _ownerExists = userId.HasValue;
 
