@@ -47,7 +47,7 @@
 
 @code {
     
-    [CascadingParameter]
+    /*[CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
     
     protected override async Task OnInitializedAsync()
@@ -55,7 +55,7 @@
         var ownerId = await UserService.GetUserAuth0IdAsync();
         Dispatcher.Dispatch(new SetOwnerIdAction(ownerId));
         Logger.LogInformation("NavigationDrawer initialized with UserId: {ownerId}", ownerId);
-    }
+    }*/
     
     private static string Truncate(string text, int maxLength)
     {

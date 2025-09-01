@@ -24,7 +24,7 @@ public class WateringNotificationJob : IJob
     public async Task Execute(IJobExecutionContext context)
     {
         var normalWateringPlants = await _reminderLogicService.FetchUserPlantsWithMediumWateringNeedsAsync();
-        _logger.LogInformation("WateringNotificationJob executed. Plants needing normal watering: {PlantCount}", normalWateringPlants.Count);
+        /*_logger.LogInformation("WateringNotificationJob executed. Plants needing normal watering: {PlantCount}", normalWateringPlants.Count);*/
     
         foreach (var plantName in normalWateringPlants)
         {

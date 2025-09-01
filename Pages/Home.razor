@@ -8,11 +8,16 @@
 @inject UserPlantService UserPlantService
 @inject UserService UserService
 @inject UtilityService UtilityService
+@inject IDispatcher Dispatcher
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IState<UserState> UserState
 
 <PageTitle>Home</PageTitle>
 
 <div class="grid-layout-cards">
-    @foreach(var userPlant in TopUserPlants) {
+    <p>Current owner id: @UserState.Value.OwnerId</p>
+    @foreach (var userPlant in TopUserPlants)
+    {
         var plant = userPlant.Plant;
         if (plant == null) continue;
         <div class="card-wrapper">
@@ -35,7 +40,7 @@
                                     <AddSymbol/>
                                 </MudButton>
                             }
-                            
+
                         </Authorized>
                     </AuthorizeView>
                 </div>
@@ -64,10 +69,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
         TopUserPlants = await UserPlantService.GetTop6UserPlantsAsync();
         var ownerId = await UserService.GetUserAuth0IdAsync();
         var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
+
+        Dispatcher.Dispatch(new SetOwnerIdAction(ownerId));
+        var ownerIdAfterStateChange = UserState.Value.OwnerId;
         
         _ownerExists = userId.HasValue;
 
@@ -80,7 +87,7 @@
             _userPlantIds.Clear();
         }
     }
-
+    
     private static HashSet<int> UserPlantsToHashSet(List<UserPlant> userPlants)
     {
         return userPlants.Select(up => up.PlantId).ToHashSet();

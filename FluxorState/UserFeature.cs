@@ -4,5 +4,5 @@ using Fluxor;
 public class UserFeature : Feature <UserState>
 {
     public override string GetName() => "User";
-    protected override UserState GetInitialState() => new(null);
+    protected override UserState GetInitialState() => new(OwnerId: string.Empty);
 }

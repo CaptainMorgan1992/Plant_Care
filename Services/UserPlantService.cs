@@ -59,24 +59,20 @@ public class UserPlantService
     public async Task<List<UserPlant>> GetAllUserPlantsByIdAsync()
     {
         var auth0UserId = _userState.Value.OwnerId;
-        _logger.LogInformation("Fetching userId {authOUserId}.", auth0UserId);
+        /*_logger.LogInformation("Fetching userId {authOUserId}.", auth0UserId);*/
         var user = await _db.Users
             .FirstOrDefaultAsync(u => u.OwnerId == auth0UserId);
-        
-        /*_logger.LogInformation("-------------Testing fetching plants for Auth0 UserId {user.OwnerId}.", user.OwnerId);*/
 
         if (user == null) return new List<UserPlant>(); 
 
         var internalUserId = user.Id;
-        
-        _logger.LogInformation("Fetching plants for internal UserId {InternalUserId}.", internalUserId);
         
         var userPlants = await _db.UserPlants
             .Include(up => up.Plant)
             .Where(up => up.UserId == internalUserId)
             .ToListAsync();
 
-        _logger.LogInformation("Found {Count} plants for UserId {InternalUserId}.", userPlants.Count, internalUserId);
+       
         return userPlants;
     }
     
