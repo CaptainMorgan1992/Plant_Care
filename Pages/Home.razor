@@ -15,7 +15,6 @@
 <PageTitle>Home</PageTitle>
 
 <div class="grid-layout-cards">
-    <p>Current owner id: @UserState.Value.OwnerId</p>
     @foreach (var userPlant in TopUserPlants)
     {
         var plant = userPlant.Plant;
@@ -74,7 +73,7 @@
         var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
 
         Dispatcher.Dispatch(new SetOwnerIdAction(ownerId));
-        var ownerIdAfterStateChange = UserState.Value.OwnerId;
+        /*var ownerIdAfterStateChange = UserState.Value.OwnerId;*/
         
         _ownerExists = userId.HasValue;
 
