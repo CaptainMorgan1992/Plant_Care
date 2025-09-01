@@ -52,9 +52,9 @@
     
     protected override async Task OnInitializedAsync()
     {
-        var userId = await UserService.GetUserAuth0IdAsync();
-        Dispatcher.Dispatch(new SetUserIdAction(userId));
-        Logger.LogInformation("NavigationDrawer initialized with UserId: {UserId}", userId);
+        var ownerId = await UserService.GetUserAuth0IdAsync();
+        Dispatcher.Dispatch(new SetOwnerIdAction(ownerId));
+        Logger.LogInformation("NavigationDrawer initialized with UserId: {ownerId}", ownerId);
     }
     
     private static string Truncate(string text, int maxLength)

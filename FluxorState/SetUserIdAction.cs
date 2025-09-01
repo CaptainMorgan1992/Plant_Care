@@ -1,3 +1,3 @@
 ﻿namespace Auth0_Blazor.FluxorState;
 
-public record SetUserIdAction(string UserId);
+public record SetOwnerIdAction(string OwnerId);
