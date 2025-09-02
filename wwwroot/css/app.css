@@ -128,3 +128,15 @@
     border-radius: 12px !important;
     height: 450px;
 }
+
+.fixed-toast {
+    position: fixed;
+    right: 16px;
+    z-index: 10;
+    padding: 0.5rem;
+    background: #2196f3;
+    color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    margin-bottom: 2rem;
+}

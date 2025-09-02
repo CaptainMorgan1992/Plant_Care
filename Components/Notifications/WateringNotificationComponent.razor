@@ -1,13 +1,15 @@
 ﻿@using Auth0_Blazor.Services
+@using Auth0_Blazor.Icons
 @inject NotificationService NotificationService
 @inject ILogger<WateringNotificationComponent> Logger
-@namespace Components
+@namespace Components.Notifications
 
 
-@foreach (var name in _plantNames)
+@foreach (var name in _plantNames.Select((n, i) => new { Name = n, Index = i }))
 {
-    <div style="position:fixed;top:16px;right:16px;z-index:9999;padding:12px 24px;background:#2196f3;color:white;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15); margin-bottom:8px;">
-        Time to water @name!
+    <div class="fixed-toast" style="top:@(16 + name.Index * 110)px">
+        Time to water @name.Name 
+        <DropletSymbol/>
     </div>
 }
 
@@ -21,13 +23,12 @@
     
     private async void Show(string plantName)
     {
-        Logger.LogInformation("Showing watering notification for plant: {PlantName}", plantName);
         await InvokeAsync(() => {
             _plantNames.Add(plantName);
             InvokeAsync(StateHasChanged);
         });
         // Optionally hide after x seconds
-        await Task.Delay(5000); // Adjust the delay as needed
+        await Task.Delay(10000); 
         await InvokeAsync(() => {
             _plantNames.Remove(plantName);
             StateHasChanged();

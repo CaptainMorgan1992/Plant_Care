@@ -9,7 +9,6 @@
 @namespace Components
 
 <MudNavMenu Rounded="true" Margin="Margin.Normal" Color="Color.Secondary" Class="pa-2">
-    
     <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <AuthorizeView>
         <Authorized>
@@ -44,16 +43,6 @@
 
 
 @code {
-    
-    /*[CascadingParameter]
-    private Task<AuthenticationState>? AuthenticationState { get; set; }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        var ownerId = await UserService.GetUserAuth0IdAsync();
-        Dispatcher.Dispatch(new SetOwnerIdAction(ownerId));
-        Logger.LogInformation("NavigationDrawer initialized with UserId: {ownerId}", ownerId);
-    }*/
     
     private static string Truncate(string text, int maxLength)
     {
