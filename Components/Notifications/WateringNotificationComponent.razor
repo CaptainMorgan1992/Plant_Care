@@ -27,7 +27,7 @@
             _plantNames.Add(plantName);
             InvokeAsync(StateHasChanged);
         });
-        // Optionally hide after x seconds
+        // Hides notification after 10 seconds.
         await Task.Delay(10000); 
         await InvokeAsync(() => {
             _plantNames.Remove(plantName);

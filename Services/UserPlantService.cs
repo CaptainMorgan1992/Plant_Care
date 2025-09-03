@@ -56,9 +56,7 @@ public class UserPlantService
 
     public async Task<List<UserPlant>> GetAllUserPlantsByIdAsync()
     {
-        /*var auth0UserId = _userState.Value.OwnerId;*/
         var auth0UserId = _userStateService.GetOwnerId();
-        /*_logger.LogInformation("Fetching userId {authOUserId}.", auth0UserId);*/
         var user = await _db.Users
             .FirstOrDefaultAsync(u => u.OwnerId == auth0UserId);
 
