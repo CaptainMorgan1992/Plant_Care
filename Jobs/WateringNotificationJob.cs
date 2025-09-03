@@ -1,4 +1,6 @@
-﻿using Auth0_Blazor.Services;
+﻿using Auth0_Blazor.Enums;
+using Auth0_Blazor.Models;
+using Auth0_Blazor.Services;
 using Quartz;
 
 namespace Auth0_Blazor.Jobs;
@@ -27,28 +29,25 @@ public class WateringNotificationJob : IJob
      * Loops through each and every watering frequency group (Low, Normal, High)
      * For each user in the group, it loops through their plants and sends a notification for each plant
      */
+   
     public async Task Execute(IJobExecutionContext context)
     {
-        /*var normalWateringPlants = await _reminderLogicService.FetchUserPlantsWithMediumWateringNeedsAsync();
-    
-        foreach (var plantName in normalWateringPlants)
+        // Fetch Frequency from JobDataMap
+        var frequencyString = context.JobDetail.JobDataMap.GetString("frequency");
+        if (!Enum.TryParse<WaterFrequency>(frequencyString, out var frequency))
         {
-            _notificationService.ShowWateringNotification(plantName);
-        }*/
-        
+            _logger.LogWarning("Ingen giltig WaterFrequency angivet i jobparametrar.");
+            return;
+        }
+
         var groupedUsers = await _userPlantService.GetUsersWithPlantsGroupedByWaterFrequencyAsync();
-        
-        foreach(var frequencyGroup in groupedUsers)
+        var users = groupedUsers.GetValueOrDefault(frequency) ?? new List<(User, List<Plant>)>();
+
+        foreach(var (user, plants) in users)
         {
-            var frequency = frequencyGroup.Key;
-            var users = frequencyGroup.Value;
-            
-            foreach(var (user, plants) in users)
+            foreach(var plant in plants)
             {
-                foreach(var plant in plants)
-                {
-                    _notificationService.ShowWateringNotification(user, plant.Name, frequency);
-                }
+                _notificationService.ShowWateringNotification(user, plant.Name, frequency);
             }
         }
     }

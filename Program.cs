@@ -1,4 +1,5 @@
 ﻿using Auth0_Blazor.Data;
+using Auth0_Blazor.Enums;
 using Auth0_Blazor.Jobs;
 using Auth0_Blazor.Models;
 using Auth0_Blazor.Services;
@@ -51,15 +52,28 @@ builder.Services.AddScoped<UserStateService>();
 
 builder.Services.AddQuartz(q =>
 {
-    // Add WateringNotificationJob registration:
-    var wateringJobKey = new JobKey("WateringNotificationJob");
-    q.AddJob<WateringNotificationJob>(opts => opts.WithIdentity(wateringJobKey));
-    q.AddTrigger(opts => opts
-        .ForJob(wateringJobKey)
-        .WithIdentity("WateringNotificationJob-trigger")
-        .WithSimpleSchedule(x => x
-            .WithIntervalInSeconds(20)
-            .RepeatForever()));
+    var scheduleConfig = new[]
+    {
+        // EnumValue, IntervalInSeconds
+        (WaterFrequency.Low,    60),  // 1 min
+        (WaterFrequency.Normal, 30),  // 30 sek
+        (WaterFrequency.High,   15)   // 15 sek
+    };
+
+    foreach (var (frequency, intervalSeconds) in scheduleConfig)
+    {
+        var jobKey = new Quartz.JobKey($"WateringNotificationJob-{frequency}");
+        q.AddJob<WateringNotificationJob>(opts => opts
+            .WithIdentity(jobKey)
+            .UsingJobData("frequency", frequency.ToString()));
+
+        q.AddTrigger(opts => opts
+            .ForJob(jobKey)
+            .WithIdentity($"{jobKey}-trigger")
+            .WithSimpleSchedule(x => x
+                .WithIntervalInSeconds(intervalSeconds)
+                .RepeatForever()));
+    }
 });
 
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
