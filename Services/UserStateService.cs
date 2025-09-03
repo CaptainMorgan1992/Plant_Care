@@ -4,12 +4,18 @@ namespace Auth0_Blazor.Services;
 
 public class UserStateService
 {
-    private string _ownerId;
+    
+    ILogger<UserStateService> _logger;
+    
+    public UserStateService(ILogger<UserStateService> logger)
+    {
+        _logger = logger;
+    }
+    public string? OwnerId { get; private set; }
 
     public void SetOwnerId(string ownerId)
     {
-        _ownerId = ownerId;
+        OwnerId = ownerId;
+        _logger.LogInformation("--------- SetOwnerId from UserStateService {OwnerId}", ownerId);
     }
-
-    public string GetOwnerId() => _ownerId;
 }

@@ -33,13 +33,14 @@ builder.Services.AddScoped<PlantService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UtilityService>();
 builder.Services.AddScoped<UserPlantService>();
-builder.Services.AddSingleton<UserStateService>();
+
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenProvider>();
 builder.Services.AddSingleton<NotificationService>();
 builder.Services.AddScoped<ReminderLogicService>();
+builder.Services.AddScoped<UserStateService>();
 
 
 /*

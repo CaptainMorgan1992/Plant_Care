@@ -2,6 +2,7 @@
 @using Auth0_Blazor.Icons
 @inject NotificationService NotificationService
 @inject ILogger<WateringNotificationComponent> Logger
+@inject UserStateService UserStateService
 @namespace Components.Notifications
 
 
@@ -14,6 +15,7 @@
 }
 
 @code {
+    private string? CurrentOwnerId => UserStateService.OwnerId;
     private readonly List<string> _plantNames = [];
     
     protected override void OnInitialized()
@@ -21,8 +23,12 @@
         NotificationService.OnWateringNotify += Show;
     }
     
-    private async void Show(string plantName)
+    private async void Show(string plantName, string ownerId)
     {
+        if(ownerId != CurrentOwnerId)
+        {
+            return;
+        }
         await InvokeAsync(() => {
             _plantNames.Add(plantName);
             InvokeAsync(StateHasChanged);

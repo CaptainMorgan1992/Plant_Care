@@ -1,4 +1,5 @@
 ﻿using Auth0_Blazor.Data;
+using Auth0_Blazor.Enums;
 using Auth0_Blazor.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,18 +10,15 @@ public class UserPlantService
     private readonly ApplicationDbContext _db;
     private readonly UserService _userService;
     private readonly ILogger<UserPlantService> _logger;
-    private readonly UserStateService _userStateService;
 
     public UserPlantService (
         ApplicationDbContext db,
         UserService userService,
-        ILogger<UserPlantService> logger,
-        UserStateService userStateService)
+        ILogger<UserPlantService> logger)
     {
         _db = db;
         _userService = userService;
         _logger = logger;
-        _userStateService = userStateService;
     }
     
     public async Task AddPlantToUserHouseholdAsync(int plantId)
@@ -54,9 +52,10 @@ public class UserPlantService
         _logger.LogInformation("PlantId {PlantId} kopplades till UserId {UserId}.", plantId, userId.Value);
     }
 
-    public async Task<List<UserPlant>> GetAllUserPlantsByIdAsync()
+    /* Kolla upp detta */
+    public async Task<List<UserPlant>> GetAllUserPlantsByIdAsync(string auth0UserId)
     {
-        var auth0UserId = _userStateService.GetOwnerId();
+        _logger.LogInformation("Auth0 UserId from UserStateService: {Auth0UserId}", auth0UserId);
         var user = await _db.Users
             .FirstOrDefaultAsync(u => u.OwnerId == auth0UserId);
 
@@ -163,4 +162,54 @@ public class UserPlantService
         return topUserPlants;
     }
     
+    /*public async Task<List<User>> GetAllUsersWithPlantsAsync(WaterFrequency frequency)
+    {
+        var usersWithPlants = await _db.Users
+            .Where(u => _db.UserPlants
+                .Any(up => up.UserId == u.Id && up.Plant.WaterFrequency == frequency))
+            .ToListAsync();
+
+        return usersWithPlants;
+    }*/
+    
+    /*
+     * Creates an empty dictionary where the WaterFrequency is the key, and the value is a list of tuples (User with their plants).
+     * Fetches all users from the database.
+     * For each user, fetches their associated plants and groups them by WaterFrequency.
+     * If the group does not exist in the result dictionary, it initializes a new list for that frequency.
+     * Adds the tuple (user, list of plants) to the appropriate frequency group in the result dictionary.
+     * Returns the populated dictionary where each waterfrequency has a list of users + their plants with the appropriate frequency.
+     */
+
+    public async Task<Dictionary<WaterFrequency, List<(User user, List<Plant> plants)>>>
+        GetUsersWithPlantsGroupedByWaterFrequencyAsync()
+    {
+        var result = new Dictionary<WaterFrequency, List<(User user, List<Plant>)>>();
+        
+        var allUsers = await _db.Users.ToListAsync();
+        foreach (var user in allUsers)
+        {
+            var userPlants = await _db.UserPlants
+                .Where(up => up.UserId == user.Id)
+                .Include(up => up.Plant)
+                .ToListAsync();
+            
+            var groupedPlants = userPlants
+                .Where(up => up.Plant != null)
+                .GroupBy(up => up.Plant!.WaterFrequency)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(up => up.Plant!).ToList());
+
+            foreach (var kvp in groupedPlants)
+            {
+                if (!result.ContainsKey(kvp.Key))
+                    result[kvp.Key] = new List<(User, List<Plant>)>();
+
+                result[kvp.Key].Add((user, kvp.Value));
+            }
+        }
+        _logger.LogInformation("Result from GetUsersWithPlantsGroupedByWaterFrequencyAsync: {Result}", result);
+        return result;
+    }
 }

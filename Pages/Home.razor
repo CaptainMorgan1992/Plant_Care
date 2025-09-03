@@ -74,6 +74,8 @@
 
         UserStateService.SetOwnerId(ownerId);
         
+        Logger.LogInformation("--------- OwnerId: {OwnerId} from Home", ownerId);
+        
         _ownerExists = userId.HasValue;
 
         if (_ownerExists)
