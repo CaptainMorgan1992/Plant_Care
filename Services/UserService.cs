@@ -25,16 +25,15 @@ public class UserService
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        
         var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
-        if (string.IsNullOrWhiteSpace(userId))
+
+        if (!string.IsNullOrWhiteSpace(userId))
         {
-            _logger.LogError("UserId is missing. Throwing exception.");
-            return null;
+            return userId;
         }
         
-        return userId;
+        _logger.LogError("UserId is missing. Throwing exception.");
+        throw new InvalidOperationException("UserId is missing.");
     }
     
     public async Task<int?> GetUserIdByOwnerIdAsync(string ownerId)
