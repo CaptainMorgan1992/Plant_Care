@@ -40,7 +40,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenProvider>();
 builder.Services.AddSingleton<NotificationService>();
-builder.Services.AddScoped<ReminderLogicService>();
 builder.Services.AddScoped<UserStateService>();
 
 
