@@ -16,7 +16,7 @@ public class NotificationService
         OnNotify?.Invoke(message);
     }
     
-    public void ShowWateringNotification(User user, string plantName, WaterFrequency frequency)
+    public void ShowWateringNotification(User user, string plantName)
     {
         OnWateringNotify?.Invoke(plantName, user.OwnerId);
     }

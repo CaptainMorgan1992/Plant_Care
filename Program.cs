@@ -47,7 +47,7 @@ builder.Services.AddScoped<UserStateService>();
 /*
  * Q U A R T Z  S E T U P
  *  - This part is responsible for _when_ the job is executing.
- * This is a DI-friendly approach to setting up Quartz.NET in ASP.NET Core.
+ * Uses the WateringFrequenzy-enum to determine the interval.
  */
 
 builder.Services.AddQuartz(q =>

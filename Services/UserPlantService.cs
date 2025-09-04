@@ -162,16 +162,6 @@ public class UserPlantService
         return topUserPlants;
     }
     
-    /*public async Task<List<User>> GetAllUsersWithPlantsAsync(WaterFrequency frequency)
-    {
-        var usersWithPlants = await _db.Users
-            .Where(u => _db.UserPlants
-                .Any(up => up.UserId == u.Id && up.Plant.WaterFrequency == frequency))
-            .ToListAsync();
-
-        return usersWithPlants;
-    }*/
-    
     /*
      * Creates an empty dictionary where the WaterFrequency is the key, and the value is a list of tuples (User with their plants).
      * Fetches all users from the database.
@@ -209,7 +199,6 @@ public class UserPlantService
                 result[kvp.Key].Add((user, kvp.Value));
             }
         }
-        _logger.LogInformation("Result from GetUsersWithPlantsGroupedByWaterFrequencyAsync: {Result}", result);
         return result;
     }
 }
