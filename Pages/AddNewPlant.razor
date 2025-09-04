@@ -1,0 +1,24 @@
+﻿@page "/addnewplant"
+@using Auth0_Blazor.Services
+@inject UserService UserService
+
+@if (_isUserAdmin)
+{
+    <div>Testing component</div>
+} 
+else
+{
+    <div>You do not have permission to access this page.</div>
+}
+
+
+@code {
+    private bool _isUserAdmin = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var ownerId = await UserService.GetUserAuth0IdAsync();
+        _isUserAdmin = await UserService.IsUserAdminAsync(ownerId);
+    }
+
+}

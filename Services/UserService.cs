@@ -36,6 +36,14 @@ public class UserService
         throw new InvalidOperationException("UserId is missing.");
     }
     
+    public async Task<bool> IsUserAdminAsync(string ownerId)
+    {
+        var user = await _db.Users
+            .Where(u => u.OwnerId == ownerId)
+            .FirstOrDefaultAsync();
+
+        return user?.IsAdmin ?? false;
+    }
     public async Task<int?> GetUserIdByOwnerIdAsync(string ownerId)
     {
         var user = await _db.Users
