@@ -21,19 +21,20 @@ public class UserService
         _db = db;
     }
 
-    public async Task<string> GetUserAuth0IdAsync()
+    public async Task<string?> GetUserAuth0IdAsync()
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
+        
         var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (!string.IsNullOrWhiteSpace(userId))
+        
+        if (string.IsNullOrWhiteSpace(userId))
         {
-            return userId;
+            _logger.LogError("UserId is missing. Throwing exception.");
+            return null;
         }
         
-        _logger.LogError("UserId is missing. Throwing exception.");
-        throw new InvalidOperationException("UserId is missing.");
+        return userId;
     }
     
     public async Task<int?> GetUserIdByOwnerIdAsync(string ownerId)
