@@ -128,6 +128,9 @@
         await UpdateUserPlantsStateAsync();
     }
     
+    /*
+     * Fetches each plantId from the user's plants and converts them into a HashSet for quick lookup.
+     */
     private static HashSet<int> UserPlantsToHashSet(List<UserPlant> userPlants)
     {
         return userPlants.Select(up => up.PlantId).ToHashSet();

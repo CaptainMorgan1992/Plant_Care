@@ -21,7 +21,7 @@ public class UserService
         _db = db;
     }
 
-    public async Task<string> GetUserAuth0IdAsync()
+    public async Task<string?> GetUserAuth0IdAsync()
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
