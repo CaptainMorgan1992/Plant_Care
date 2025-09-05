@@ -1,4 +1,5 @@
 ﻿@page "/addnewplant"
+@using System.Security.Principal
 @using Auth0_Blazor.Services
 @inject UserService UserService
 
@@ -18,6 +19,12 @@ else
     protected override async Task OnInitializedAsync()
     {
         var ownerId = await UserService.GetUserAuth0IdAsync();
+
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            throw new ArgumentNullException(nameof(ownerId), "Owner ID is null or empty.");
+        }
+        
         _isUserAdmin = await UserService.IsUserAdminAsync(ownerId);
     }
 

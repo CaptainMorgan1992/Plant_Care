@@ -1,7 +1,9 @@
-﻿using Auth0_Blazor.Data;
+﻿using System.Security.Principal;
+using Auth0_Blazor.Data;
 using Auth0_Blazor.Enums;
 using Auth0_Blazor.Models;
 using Microsoft.EntityFrameworkCore;
+using Quartz.Util;
 
 namespace Auth0_Blazor.Services;
 
@@ -25,6 +27,12 @@ public class UserPlantService
     {
         await _userService.SaveUserOnClick();
         var ownerId = await _userService.GetUserAuth0IdAsync();
+        
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            throw new InvalidOperationException("OwnerId cannot be null or empty.");
+        }
+        
         var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
 
         if (!userId.HasValue)
@@ -48,12 +56,10 @@ public class UserPlantService
 
         _db.UserPlants.Add(userPlant);
         await _db.SaveChangesAsync();
-
-        _logger.LogInformation("PlantId {PlantId} kopplades till UserId {UserId}.", plantId, userId.Value);
     }
 
     /* Kolla upp detta */
-    public async Task<List<UserPlant>> GetAllUserPlantsByIdAsync(string auth0UserId)
+    /*public async Task<List<UserPlant>> GetAllUserPlantsByIdAsync(string auth0UserId)
     {
         _logger.LogInformation("Auth0 UserId from UserStateService: {Auth0UserId}", auth0UserId);
         var user = await _db.Users
@@ -70,17 +76,23 @@ public class UserPlantService
 
        
         return userPlants;
-    }
+    }*/
     
     public async Task<List<UserPlant>> GetUserPlantsAsync()
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
+
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            throw new InvalidOperationException("OwnerId cannot be null or empty.");
+        }
+        
         var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
 
         if (!userId.HasValue)
         {
-            _logger.LogWarning("Ingen användare hittades för OwnerId {OwnerId}. Inga växter kan hämtas.", ownerId);
-            return new List<UserPlant>();
+            _logger.LogWarning("No user found with OwnerId {OwnerId}.", ownerId);
+            return [];
         }
 
         return await _db.UserPlants
@@ -92,6 +104,12 @@ public class UserPlantService
     public async Task<bool> UserHasPlantAsync(int plantId)
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
+
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            throw new ArgumentNullException(ownerId, "Owner ID is null or empty.");
+        }
+        
         var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
         return await _db.UserPlants
             .AnyAsync(up => up.UserId == userId && up.PlantId == plantId);
@@ -100,6 +118,12 @@ public class UserPlantService
     public async Task RemovePlantFromUserHouseholdAsync(int plantId)
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
+
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            throw new ArgumentNullException(ownerId, "Owner ID is null or empty.");
+        }
+        
         var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
         
         // Search for the first matching UserPlant entry.
@@ -148,15 +172,14 @@ public class UserPlantService
                 .Take(6 - topUserPlants.Count)
                 .ToList();
 
-            foreach (var plant in randomPlants)
-            {
-                topUserPlants.Add(new UserPlant
+            topUserPlants.AddRange(
+                randomPlants.Select(plant => new UserPlant
                 {
                     PlantId = plant.Id,
                     Plant = plant,
                     UserId = 0
-                });
-            }
+                })
+            );
         }
 
         return topUserPlants;

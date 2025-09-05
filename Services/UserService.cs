@@ -72,6 +72,12 @@ public class UserService
     {
         var userId = await GetUserAuth0IdAsync();
         var username = await FetchCurrentUserAsync();
+        
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            _logger.LogWarning("No userId found. User details will not be saved.");
+            return;
+        }
 
         var exists = await _db.Users.AnyAsync(u => u.OwnerId == userId);
 

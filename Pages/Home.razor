@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Security.Principal
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Icons
@@ -62,14 +63,20 @@
 
 @code {
     public required List<UserPlant> TopUserPlants;
-    private HashSet<int> _userPlantIds = new();
-    private bool _ownerExists = false;
-    private List<UserPlant> _userPlants = new();
+    private HashSet<int> _userPlantIds = [];
+    private bool _ownerExists;
+    private List<UserPlant> _userPlants = [];
 
     protected override async Task OnInitializedAsync()
     {
         TopUserPlants = await UserPlantService.GetTop6UserPlantsAsync();
         var ownerId = await UserService.GetUserAuth0IdAsync();
+
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            throw new ArgumentNullException(nameof(ownerId), "Owner ID is null or empty.");
+        }
+        
         var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
 
         UserStateService.SetOwnerId(ownerId);

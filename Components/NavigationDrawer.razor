@@ -13,7 +13,7 @@
     <AuthorizeView>
         <Authorized>
             <MudNavLink Icon="@Icons.Material.Filled.Person" Class="nav-item px-3">
-                @Truncate(context.User.Identity?.Name, 16)
+                @Truncate(context.User.Identity?.Name ?? "Unknown User", 16)
             </MudNavLink>
             <MudNavLink Class="nav-item px-3">
                 <MudButton Href="/logout" Variant="Variant.Text" Color="Color.Primary" Class="nav-link">
