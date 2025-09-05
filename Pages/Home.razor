@@ -72,26 +72,21 @@
         TopUserPlants = await UserPlantService.GetTop6UserPlantsAsync();
         var ownerId = await UserService.GetUserAuth0IdAsync();
 
-        if (string.IsNullOrWhiteSpace(ownerId))
+        if (!string.IsNullOrWhiteSpace(ownerId))
         {
-            throw new ArgumentNullException(nameof(ownerId), "Owner ID is null or empty.");
-        }
-        
-        var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
+            var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
+            UserStateService.SetOwnerId(ownerId);
 
-        UserStateService.SetOwnerId(ownerId);
-        
-        Logger.LogInformation("--------- OwnerId: {OwnerId} from Home", ownerId);
-        
-        _ownerExists = userId.HasValue;
+            _ownerExists = userId.HasValue;
 
-        if (_ownerExists)
-        {
-            await UpdateUserPlantsStateAsync();
-        }
-        else
-        {
-            _userPlantIds.Clear();
+            if (_ownerExists)
+            {
+                await UpdateUserPlantsStateAsync();
+            }
+            else
+            {
+                _userPlantIds.Clear();
+            }
         }
     }
     

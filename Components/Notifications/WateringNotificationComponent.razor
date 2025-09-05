@@ -9,14 +9,20 @@
 @foreach (var name in _plantNames.Select((n, i) => new { Name = n, Index = i }))
 {
     <div class="fixed-toast" style="top:@(16 + name.Index * 110)px">
-        Time to water @name.Name 
-        <DropletSymbol/>
+        <div class="position-relative">
+            Time to water @name.Name
+            <DropletSymbol/>
+            <div class="corner-closeSymbol" @onclick="() => CloseNotification(name.Index)">
+                <CloseSymbol/>
+            </div>
+        </div>
     </div>
 }
 
 @code {
     private string? CurrentOwnerId => UserStateService.OwnerId;
     private readonly List<string> _plantNames = [];
+    
     
     protected override void OnInitialized()
     {
@@ -44,5 +50,11 @@
     public void Dispose()
     {
         NotificationService.OnWateringNotify -= Show;
+    }
+    
+    private void CloseNotification(int index)
+    {
+            _plantNames.RemoveAt(index);
+            StateHasChanged();
     }
 }
