@@ -36,6 +36,12 @@
             <MudNavLink Match="NavLinkMatch.All" Href="/savedPlants" Icon="@Icons.Material.Filled.Spa">
                 Saved plants
             </MudNavLink>
+            @if (_isUserAdmin)
+            {
+                <MudNavLink Match="NavLinkMatch.All" Href="/addNewPlant" Icon="@Icons.Material.Filled.Add">
+                    Add new plant 
+                </MudNavLink>
+            }
         </Authorized>
     </AuthorizeView>
     
@@ -43,6 +49,18 @@
 
 
 @code {
+    private bool _isUserAdmin = false;
+    
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var ownerId = await UserService.GetUserAuth0IdAsync();
+
+        if (!string.IsNullOrWhiteSpace(ownerId))
+        {
+            _isUserAdmin = await UserService.IsUserAdminAsync(ownerId);
+        }
+    }
     
     private static string Truncate(string text, int maxLength)
     {

@@ -8,7 +8,7 @@
 
 @foreach (var name in _plantNames.Select((n, i) => new { Name = n, Index = i }))
 {
-    <div class="fixed-toast" style="top:@(16 + name.Index * 110)px">
+    <div class="fixed-toast" style="top:@(16 + name.Index * 95)px">
         <div class="position-relative">
             Time to water @name.Name
             <DropletSymbol/>
