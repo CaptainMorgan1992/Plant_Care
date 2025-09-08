@@ -1,5 +1,4 @@
-﻿
-@using Auth0_Blazor.Services
+﻿@using Auth0_Blazor.Services
 @using MudBlazor
 @inject NavigationManager NavigationManager
 @inject ILogger<NavigationDrawer> Logger
@@ -49,7 +48,7 @@
 
 
 @code {
-    private bool _isUserAdmin = false;
+    private bool _isUserAdmin;
     
     
     protected override async Task OnInitializedAsync()

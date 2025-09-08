@@ -31,4 +31,11 @@ public class PlantService
         return plant;
     }
     
+    public async Task<bool> AddNewPlantAsync(Plant plant)
+    {
+        _context.Plants.Add(plant);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    
 }

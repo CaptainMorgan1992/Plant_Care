@@ -1,11 +1,55 @@
 ﻿@page "/addnewplant"
-@using System.Security.Principal
 @using Auth0_Blazor.Services
+@using Auth0_Blazor.Enums
+@using System.ComponentModel.DataAnnotations
+@using Auth0_Blazor.Models
 @inject UserService UserService
+@inject PlantService PlantService
+@inject ILogger<AddNewPlant> Logger
 
 @if (_isUserAdmin)
 {
-    <div>Testing component</div>
+    <MudGrid>
+        <MudItem>
+            <MudPaper>
+                <MudForm @ref="form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                    <MudTextField @bind-Value="_plantName" T="string" Label="Plant name (latin)" Required="true" RequiredError="Plant name is required"/>
+                    <MudTextField @bind-Value="_description" T="string" Label="Description" Required="true" RequiredError="Description is required"/>
+                    <MudTextField @bind-Value="_imageUrl" T="string" Label="Image URL" Required="true" RequiredError="Image URL is required"/>
+                    <div class="d-flex flex-column">
+                        <MudText Typo="Typo.h6">Select watering frequency. </MudText>
+                        <MudRadioGroup T="WaterFrequency" @bind-Value="_selectedFrequency" immediate="true" RequiredError="Water frequency is required">
+                            @foreach (var frequency in _waterFrequency)
+                            {
+                                <MudRadio T="WaterFrequency" Value="@frequency" Color="Color.Primary">@frequency.ToString()</MudRadio>
+                            }
+                        </MudRadioGroup>
+                    </div>
+                    <MudTextField @bind-Value="_origin" T="string" Label="Origin" Required="true" RequiredError="Origin is required"/>
+
+                    <div class="d-flex align-center justify-space-between">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto"
+                                   OnClick="@AddNewPlantAsync">Add plant</MudButton>
+                    </div>
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="5">
+            <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">@($"Errors ({_errors.Length})")</MudText>
+                @foreach (var error in _errors)
+                {
+                    <MudText Color="@Color.Error">@error</MudText>
+                    
+                }
+                <div>Selected: @_selectedFrequency</div>
+                <div>@_plantName</div>
+                <div>@_description</div>
+                <div>@_imageUrl</div>
+                <div>@_origin</div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
 } 
 else
 {
@@ -14,7 +58,18 @@ else
 
 
 @code {
-    private bool _isUserAdmin = false;
+    private bool _success;
+    private bool _isUserAdmin;
+    private readonly WaterFrequency [] _waterFrequency = Enum.GetValues<WaterFrequency>();
+    private string[] _errors = [];
+    MudForm? form;
+    
+    // Add bound properties for each input
+    private string _plantName = string.Empty;
+    private string _description = string.Empty;
+    private string _imageUrl = string.Empty;
+    private string _origin = string.Empty;
+    private WaterFrequency _selectedFrequency = WaterFrequency.Low;
 
     protected override async Task OnInitializedAsync()
     {
@@ -26,6 +81,26 @@ else
         }
         
         _isUserAdmin = await UserService.IsUserAdminAsync(ownerId);
+    }
+    
+    private async Task AddNewPlantAsync()
+    {
+        
+        var plant = new Plant
+        {
+            Name = _plantName,
+            Description = _description,
+            ImageUrl = _imageUrl,
+            Origin = _origin,
+            WaterFrequency = _selectedFrequency
+        };
+        
+        var success = await PlantService.AddNewPlantAsync(plant);
+
+        if (success)
+        {
+            Logger.LogInformation("Adding new plant: {@Plant}", plant);
+        }
     }
 
 }
