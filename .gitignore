@@ -25,5 +25,5 @@ obj/
 *.db-shm
 
 #settings
-.appsettings/*.json
 appsettings.*.json
+appsettings.json
