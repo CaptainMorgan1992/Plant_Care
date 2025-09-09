@@ -1,0 +1,108 @@
+﻿@page "/addnewplant"
+@using Auth0_Blazor.Services
+@using Auth0_Blazor.Enums
+@using System.ComponentModel.DataAnnotations
+@using Auth0_Blazor.Models
+@inject UserService UserService
+@inject PlantService PlantService
+@inject ILogger<AddNewPlant> Logger
+
+@if (_isUserAdmin)
+{
+    <MudItem Class="p-4">
+        <MudPaper Class="p-4">
+            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                <MudTextField @bind-Value="_plantName" T="string" Label="Plant name (latin)" Required="true" RequiredError="Plant name is required"/>
+                <MudTextField @bind-Value="_description" T="string" Label="Description" Required="true" RequiredError="Description is required"/>
+                <MudTextField @bind-Value="_imageUrl" T="string" Label="Image URL" Required="true" RequiredError="Image URL is required"/>
+                <MudTextField @bind-Value="_origin" T="string" Label="Origin" Required="true" RequiredError="Origin is required"/>
+                <MudText Class="mt-2">Select watering frequency </MudText>
+                <div class="d-flex flex-column">
+                    <MudRadioGroup T="WaterFrequency" @bind-Value="_selectedFrequency" RequiredError="Water frequency is required">
+                        @foreach (var frequency in _waterFrequency)
+                        {
+                            <MudRadio T="WaterFrequency" Value="@frequency" Color="Color.Primary">@frequency.ToString()</MudRadio>
+                        }
+                    </MudRadioGroup>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)"
+                               OnClick="@AddNewPlantAsync">Add plant</MudButton>
+                </div>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+    <div class="d-flex align-items-center justify-content-center">
+        <p>@_successMessage</p>
+    </div>
+        <MudItem Class="mt-3 p-4">
+            <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">@($"Errors ({_errors.Length})")</MudText>
+                @foreach (var error in _errors)
+                {
+                    <MudText Color="@Color.Error">@error</MudText>
+                    
+                }
+            </MudPaper>
+        </MudItem>
+} 
+else
+{
+    <div>You do not have permission to access this page.</div>
+}
+
+
+@code {
+    private string _successMessage = "";
+    private bool _success;
+    private bool _isUserAdmin;
+    private string? _ownerId;
+    private string[] _errors = [];
+    private string _plantName = string.Empty;
+    private string _description = string.Empty;
+    private string _imageUrl = string.Empty;
+    private string _origin = string.Empty;
+    private WaterFrequency _selectedFrequency = WaterFrequency.Low;
+    private readonly WaterFrequency [] _waterFrequency = Enum.GetValues<WaterFrequency>();
+    MudForm? _form;
+
+    protected override async Task OnInitializedAsync()
+    { 
+        _ownerId = await UserService.GetUserAuth0IdAsync();
+
+        if (string.IsNullOrWhiteSpace(_ownerId))
+        {
+            throw new ArgumentNullException(nameof(_ownerId), "Owner ID is null or empty.");
+        }
+        
+        _isUserAdmin = await UserService.IsUserAdminAsync(_ownerId);
+    }
+    
+    private async Task AddNewPlantAsync()
+    {
+        var plant = new Plant
+        {
+            Name = _plantName,
+            Description = _description,
+            ImageUrl = _imageUrl,
+            Origin = _origin,
+            WaterFrequency = _selectedFrequency
+        };
+        
+        var success = await PlantService.AddNewPlantAsync(plant, _ownerId ?? string.Empty);
+
+        if (success && _form != null)
+        {
+            Logger.LogInformation("Adding new plant: {@Plant}", plant);
+            _successMessage = "Plant added successfully!";
+            await _form.ResetAsync();
+            await Task.Delay(5000).ContinueWith(_ =>
+            {
+                _successMessage = string.Empty;
+                InvokeAsync(StateHasChanged);
+            });
+        }
+    }
+
+}

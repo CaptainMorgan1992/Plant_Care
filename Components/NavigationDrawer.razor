@@ -1,5 +1,4 @@
-﻿
-@using Auth0_Blazor.Services
+﻿@using Auth0_Blazor.Services
 @using MudBlazor
 @inject NavigationManager NavigationManager
 @inject ILogger<NavigationDrawer> Logger
@@ -13,7 +12,7 @@
     <AuthorizeView>
         <Authorized>
             <MudNavLink Icon="@Icons.Material.Filled.Person" Class="nav-item px-3">
-                @Truncate(context.User.Identity?.Name, 16)
+                @Truncate(context.User.Identity?.Name ?? "Unknown User", 16)
             </MudNavLink>
             <MudNavLink Class="nav-item px-3">
                 <MudButton Href="/logout" Variant="Variant.Text" Color="Color.Primary" Class="nav-link">
@@ -36,6 +35,12 @@
             <MudNavLink Match="NavLinkMatch.All" Href="/savedPlants" Icon="@Icons.Material.Filled.Spa">
                 Saved plants
             </MudNavLink>
+            @if (_isUserAdmin)
+            {
+                <MudNavLink Match="NavLinkMatch.All" Href="/addNewPlant" Icon="@Icons.Material.Filled.Add">
+                    Add new plant 
+                </MudNavLink>
+            }
         </Authorized>
     </AuthorizeView>
     
@@ -43,6 +48,18 @@
 
 
 @code {
+    private bool _isUserAdmin;
+    
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var ownerId = await UserService.GetUserAuth0IdAsync();
+
+        if (!string.IsNullOrWhiteSpace(ownerId))
+        {
+            _isUserAdmin = await UserService.IsUserAdminAsync(ownerId);
+        }
+    }
     
     private static string Truncate(string text, int maxLength)
     {

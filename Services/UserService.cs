@@ -25,16 +25,25 @@ public class UserService
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        
         var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         if (string.IsNullOrWhiteSpace(userId))
         {
-            _logger.LogError("UserId is missing. Throwing exception.");
+            _logger.LogInformation("UserId is missing");
             return null;
+            
         }
         
         return userId;
+    }
+    
+    public async Task<bool> IsUserAdminAsync(string ownerId)
+    {
+        var user = await _db.Users
+            .Where(u => u.OwnerId == ownerId)
+            .FirstOrDefaultAsync();
+
+        return user?.IsAdmin ?? false;
     }
     
     public async Task<int?> GetUserIdByOwnerIdAsync(string ownerId)
@@ -64,6 +73,12 @@ public class UserService
     {
         var userId = await GetUserAuth0IdAsync();
         var username = await FetchCurrentUserAsync();
+        
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            _logger.LogWarning("No userId found. User details will not be saved.");
+            return;
+        }
 
         var exists = await _db.Users.AnyAsync(u => u.OwnerId == userId);
 

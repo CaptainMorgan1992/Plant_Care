@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Security.Principal
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Icons
@@ -62,29 +63,30 @@
 
 @code {
     public required List<UserPlant> TopUserPlants;
-    private HashSet<int> _userPlantIds = new();
-    private bool _ownerExists = false;
-    private List<UserPlant> _userPlants = new();
+    private HashSet<int> _userPlantIds = [];
+    private bool _ownerExists;
+    private List<UserPlant> _userPlants = [];
 
     protected override async Task OnInitializedAsync()
     {
         TopUserPlants = await UserPlantService.GetTop6UserPlantsAsync();
         var ownerId = await UserService.GetUserAuth0IdAsync();
-        var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
 
-        UserStateService.SetOwnerId(ownerId);
-        
-        Logger.LogInformation("--------- OwnerId: {OwnerId} from Home", ownerId);
-        
-        _ownerExists = userId.HasValue;
+        if (!string.IsNullOrWhiteSpace(ownerId))
+        {
+            var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
+            UserStateService.SetOwnerId(ownerId);
 
-        if (_ownerExists)
-        {
-            await UpdateUserPlantsStateAsync();
-        }
-        else
-        {
-            _userPlantIds.Clear();
+            _ownerExists = userId.HasValue;
+
+            if (_ownerExists)
+            {
+                await UpdateUserPlantsStateAsync();
+            }
+            else
+            {
+                _userPlantIds.Clear();
+            }
         }
     }
     

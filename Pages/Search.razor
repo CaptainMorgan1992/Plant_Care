@@ -1,4 +1,5 @@
 ﻿@page "/search"
+@using System.Security.Principal
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Icons
@@ -66,18 +67,24 @@
 
 @code {
     private string _searchTerm = "";
-    public required List<Plant> FilteredPlants = new();
-    public required List<Plant> Plants = new();
+    public required List<Plant> FilteredPlants = [];
+    public required List<Plant> Plants = [];
     private bool _ownerExists = false;
-    private HashSet<int> _userPlantIds = new();
-    private List<UserPlant> _userPlants = new();
+    private HashSet<int> _userPlantIds = [];
+    private List<UserPlant> _userPlants = [];
     
     protected override async Task OnInitializedAsync()
     {
         Plants = await PlantService.GetAllPlantsAsync();
-        FilteredPlants = new List<Plant>();
+        FilteredPlants = [];
         
         var ownerId = await UserService.GetUserAuth0IdAsync();
+
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            throw new ArgumentNullException(nameof(ownerId), "Owner ID is null or empty.");
+        }
+        
         var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
         
         _ownerExists = userId.HasValue;
