@@ -23,3 +23,7 @@ obj/
 
 *.db-wal
 *.db-shm
+
+#settings
+.appsettings/*.json
+appsettings.*.json
