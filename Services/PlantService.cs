@@ -8,10 +8,12 @@ namespace Auth0_Blazor.Services;
 public class PlantService
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserService _userService;
 
-    public PlantService(ApplicationDbContext context)
+    public PlantService(ApplicationDbContext context, UserService userService)
     {
         _context = context;
+        _userService = userService;
     }
 
     public async Task<List<Plant>> GetAllPlantsAsync()
@@ -31,8 +33,20 @@ public class PlantService
         return plant;
     }
     
-    public async Task<bool> AddNewPlantAsync(Plant plant)
+    public async Task<bool> AddNewPlantAsync(Plant plant, string ownerId)
     {
+
+        if (string.IsNullOrEmpty(ownerId))
+        {
+            throw new  ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
+        }
+        
+        var isUserAdmin = await _userService.IsUserAdminAsync(ownerId);
+
+        if (!isUserAdmin)
+        {
+            throw new UnauthorizedAccessException("Only admins can add new plants.");
+        }
         _context.Plants.Add(plant);
         await _context.SaveChangesAsync();
         return true;
