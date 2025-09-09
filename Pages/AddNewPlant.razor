@@ -3,6 +3,7 @@
 @using Auth0_Blazor.Enums
 @using System.ComponentModel.DataAnnotations
 @using Auth0_Blazor.Models
+@using Fluxor
 @inject UserService UserService
 @inject PlantService PlantService
 @inject ILogger<AddNewPlant> Logger
@@ -81,6 +82,8 @@ else
     
     private async Task AddNewPlantAsync()
     {
+        _errors = Array.Empty<string>();
+        
         var plant = new Plant
         {
             Name = _plantName,
@@ -89,20 +92,49 @@ else
             Origin = _origin,
             WaterFrequency = _selectedFrequency
         };
+        var validationErrors = CheckXssFromUser(plant);
         
-        var success = await PlantService.AddNewPlantAsync(plant, _ownerId ?? string.Empty);
-
-        if (success && _form != null)
+        if(validationErrors.Count > 0)
         {
-            Logger.LogInformation("Adding new plant: {@Plant}", plant);
-            _successMessage = "Plant added successfully!";
-            await _form.ResetAsync();
-            await Task.Delay(5000).ContinueWith(_ =>
-            {
-                _successMessage = string.Empty;
-                InvokeAsync(StateHasChanged);
-            });
+            _errors = validationErrors.ToArray();
+            await InvokeAsync(StateHasChanged);
+            return;
         }
+
+            var success = await PlantService.AddNewPlantAsync(plant, _ownerId ?? string.Empty);
+            
+            if (success && _form != null)
+            {
+                Logger.LogInformation("Adding new plant: {@Plant}", plant);
+                _successMessage = "Plant added successfully!";
+                await _form.ResetAsync();
+                await Task.Delay(5000).ContinueWith(_ =>
+                {
+                    _successMessage = string.Empty;
+                    InvokeAsync(StateHasChanged);
+                });
+            }
+    }
+    
+    private static List<string> CheckXssFromUser(Plant plant)
+    {
+        var errors = new List<string>();
+
+        if (string.IsNullOrWhiteSpace(plant.Name) || plant.Name.Length > 100)
+            errors.Add("Plant name invalid.");
+
+        if (string.IsNullOrWhiteSpace(plant.Description) || plant.Description.Length > 2000)
+            errors.Add("Description invalid.");
+
+        if (string.IsNullOrWhiteSpace(plant.Origin) || plant.Origin.Length > 50)
+            errors.Add("Origin invalid.");
+
+        if (!Uri.TryCreate(plant.ImageUrl, UriKind.Absolute, out var uriResult)
+            || !(uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
+            || plant.ImageUrl.Contains(" ") || plant.ImageUrl.Any(char.IsWhiteSpace))
+            errors.Add("Invalid image URL.");
+
+        return errors;
     }
 
 }

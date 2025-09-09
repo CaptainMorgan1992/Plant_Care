@@ -1,9 +1,7 @@
 ﻿@page "/search"
-@using System.Security.Principal
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Icons
-@using MudBlazor
 @inject PlantService PlantService
 @inject UserService UserService
 @inject UserPlantService UserPlantService
@@ -101,7 +99,7 @@
     
     private void SearchPlants()
     {
-        if (!string.IsNullOrWhiteSpace(_searchTerm) && _searchTerm.Length >= 3)
+        if (_searchTerm is { Length: >= 3 and <= 50 } && !string.IsNullOrWhiteSpace(_searchTerm))
         {
             FilteredPlants = Plants
                 .Where(p => p.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase))

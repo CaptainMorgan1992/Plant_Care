@@ -25,12 +25,6 @@ public class UserService
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        
-        /*if (!user.Identity?.IsAuthenticated ?? true)
-        {
-            return null;
-        }*/
-        
         var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrWhiteSpace(userId))
