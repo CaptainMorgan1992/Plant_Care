@@ -9,15 +9,15 @@
 
 @if (_isUserAdmin)
 {
-    <MudGrid>
-        <MudItem>
-            <MudPaper>
+        <MudItem Class="p-4">
+            <MudPaper Class="p-4">
                 <MudForm @ref="form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                     <MudTextField @bind-Value="_plantName" T="string" Label="Plant name (latin)" Required="true" RequiredError="Plant name is required"/>
                     <MudTextField @bind-Value="_description" T="string" Label="Description" Required="true" RequiredError="Description is required"/>
                     <MudTextField @bind-Value="_imageUrl" T="string" Label="Image URL" Required="true" RequiredError="Image URL is required"/>
+                    <MudTextField @bind-Value="_origin" T="string" Label="Origin" Required="true" RequiredError="Origin is required"/>
+                    <MudText Class="mt-2">Select watering frequency </MudText>
                     <div class="d-flex flex-column">
-                        <MudText Typo="Typo.h6">Select watering frequency. </MudText>
                         <MudRadioGroup T="WaterFrequency" @bind-Value="_selectedFrequency" immediate="true" RequiredError="Water frequency is required">
                             @foreach (var frequency in _waterFrequency)
                             {
@@ -25,16 +25,15 @@
                             }
                         </MudRadioGroup>
                     </div>
-                    <MudTextField @bind-Value="_origin" T="string" Label="Origin" Required="true" RequiredError="Origin is required"/>
 
-                    <div class="d-flex align-center justify-space-between">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto"
+                    <div class="d-flex align-items-center justify-content-center">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)"
                                    OnClick="@AddNewPlantAsync">Add plant</MudButton>
                     </div>
                 </MudForm>
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="5">
+        <MudItem Class="mt-3 p-4">
             <MudPaper Class="pa-4 mud-height-full">
                 <MudText Typo="Typo.subtitle2">@($"Errors ({_errors.Length})")</MudText>
                 @foreach (var error in _errors)
@@ -42,14 +41,8 @@
                     <MudText Color="@Color.Error">@error</MudText>
                     
                 }
-                <div>Selected: @_selectedFrequency</div>
-                <div>@_plantName</div>
-                <div>@_description</div>
-                <div>@_imageUrl</div>
-                <div>@_origin</div>
             </MudPaper>
         </MudItem>
-    </MudGrid>
 } 
 else
 {

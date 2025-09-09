@@ -57,26 +57,6 @@ public class UserPlantService
         _db.UserPlants.Add(userPlant);
         await _db.SaveChangesAsync();
     }
-
-    /* Kolla upp detta */
-    /*public async Task<List<UserPlant>> GetAllUserPlantsByIdAsync(string auth0UserId)
-    {
-        _logger.LogInformation("Auth0 UserId from UserStateService: {Auth0UserId}", auth0UserId);
-        var user = await _db.Users
-            .FirstOrDefaultAsync(u => u.OwnerId == auth0UserId);
-
-        if (user == null) return new List<UserPlant>(); 
-
-        var internalUserId = user.Id;
-        
-        var userPlants = await _db.UserPlants
-            .Include(up => up.Plant)
-            .Where(up => up.UserId == internalUserId)
-            .ToListAsync();
-
-       
-        return userPlants;
-    }*/
     
     public async Task<List<UserPlant>> GetUserPlantsAsync()
     {
@@ -99,20 +79,6 @@ public class UserPlantService
             .Where(up => up.UserId == userId.Value)
             .Include(up => up.Plant)
             .ToListAsync();
-    }
-    
-    public async Task<bool> UserHasPlantAsync(int plantId)
-    {
-        var ownerId = await _userService.GetUserAuth0IdAsync();
-
-        if (string.IsNullOrWhiteSpace(ownerId))
-        {
-            throw new ArgumentNullException(ownerId, "Owner ID is null or empty.");
-        }
-        
-        var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
-        return await _db.UserPlants
-            .AnyAsync(up => up.UserId == userId && up.PlantId == plantId);
     }
 
     public async Task RemovePlantFromUserHouseholdAsync(int plantId)

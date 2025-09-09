@@ -16,6 +16,5 @@ public class UserStateService
     public void SetOwnerId(string ownerId)
     {
         OwnerId = ownerId;
-        _logger.LogInformation("--------- SetOwnerId from UserStateService {OwnerId}", ownerId);
     }
 }

@@ -45,6 +45,7 @@ public class UserService
 
         return user?.IsAdmin ?? false;
     }
+    
     public async Task<int?> GetUserIdByOwnerIdAsync(string ownerId)
     {
         var user = await _db.Users
