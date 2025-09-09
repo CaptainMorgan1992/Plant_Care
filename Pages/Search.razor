@@ -69,7 +69,7 @@
     private string _searchTerm = "";
     public required List<Plant> FilteredPlants = [];
     public required List<Plant> Plants = [];
-    private bool _ownerExists = false;
+    private bool _ownerExists;
     private HashSet<int> _userPlantIds = [];
     private List<UserPlant> _userPlants = [];
     
@@ -79,13 +79,8 @@
         FilteredPlants = [];
         
         var ownerId = await UserService.GetUserAuth0IdAsync();
-
-        if (string.IsNullOrWhiteSpace(ownerId))
-        {
-            throw new ArgumentNullException(nameof(ownerId), "Owner ID is null or empty.");
-        }
         
-        var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId);
+        var userId = await UserService.GetUserIdByOwnerIdAsync(ownerId ?? string.Empty);
         
         _ownerExists = userId.HasValue;
 
