@@ -118,7 +118,7 @@ HtmlSanitizer
 
 Plant watering reminders are scheduled using Quartz.NET, based on the `WaterFrequency` enum:
 
-| Frequency | Interval      |
+| Frequency | Interval     |
 |-----------|--------------|
 | Low       | 1 minute     |
 | Normal    | 30 seconds   |
