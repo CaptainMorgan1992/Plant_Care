@@ -1,5 +1,4 @@
-﻿using NUnit.Framework;
-using Auth0_Blazor;
+﻿using Auth0_Blazor;
 
 namespace Test;
 
@@ -14,6 +13,6 @@ public class Tests
     [Test]
     public void FailingTest()
     {
-        Assert.That(Calculator.Add(2,2), Is.EqualTo(5));
+        Assert.That(Calculator.Add(2,3), Is.EqualTo(5));
     }
 }

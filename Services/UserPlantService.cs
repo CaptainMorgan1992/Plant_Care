@@ -27,56 +27,41 @@ public class UserPlantService
     {
         await _userService.SaveUserOnClick();
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        
-        if (string.IsNullOrWhiteSpace(ownerId))
-        {
-            throw new InvalidOperationException("OwnerId cannot be null or empty.");
-        }
-        
-        var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
+        ValidateOwnerId(ownerId);
 
-        if (!userId.HasValue)
-        {
-            _logger.LogWarning("No user found for OwnerId {OwnerId}. Plant cannot be connected.", ownerId);
-            return;
-        }
+        var validOwnerId = ownerId!;
+        
+        var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
 
-        var exists = await _db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId.Value);
-        if (exists)
+        DoesUserIdHaveValue(userId);
+        
+        var validUserId = userId!;
+
+        if (await PlantAlreadyAdded(validUserId.Value, plantId))
         {
             _logger.LogInformation("PlantId {PlantId} is already connected to {UserId}.", plantId, userId.Value);
             return;
         }
-
-        var userPlant = new UserPlant
-        {
-            PlantId = plantId,
-            UserId = userId.Value
-        };
-
-        _db.UserPlants.Add(userPlant);
-        await _db.SaveChangesAsync();
+ 
+        await AddPlantToUser(plantId, validUserId.Value);
+        
     }
     
     public async Task<List<UserPlant>> GetUserPlantsAsync()
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
 
-        if (string.IsNullOrWhiteSpace(ownerId))
-        {
-            throw new InvalidOperationException("OwnerId cannot be null or empty.");
-        }
-        
-        var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
+        ValidateOwnerId(ownerId);
 
-        if (!userId.HasValue)
-        {
-            _logger.LogWarning("No user found with OwnerId {OwnerId}.", ownerId);
-            return [];
-        }
+        var validOwnerId = ownerId!;
+        
+        var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
+
+        DoesUserIdHaveValue(userId);
+        var validUserId = userId!;
 
         return await _db.UserPlants
-            .Where(up => up.UserId == userId.Value)
+            .Where(up => up.UserId == validUserId.Value)
             .Include(up => up.Plant)
             .ToListAsync();
     }
@@ -85,17 +70,19 @@ public class UserPlantService
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
 
-        if (string.IsNullOrWhiteSpace(ownerId))
-        {
-            throw new ArgumentNullException(ownerId, "Owner ID is null or empty.");
-        }
+        ValidateOwnerId(ownerId);
+
+        var validOwnerId = ownerId!;
         
-        var userId = await _userService.GetUserIdByOwnerIdAsync(ownerId);
+        var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
+
+        DoesUserIdHaveValue(userId);
+        var validUserId = userId!;
         
         // Search for the first matching UserPlant entry.
         // This is a 'LINQ' and entity framework transfers this automaticlally to SQL.
         var userPlant = await _db.UserPlants
-            .FirstOrDefaultAsync(up => up.UserId == userId && up.PlantId == plantId);
+            .FirstOrDefaultAsync(up => up.UserId == validUserId && up.PlantId == plantId);
 
         if (userPlant != null)
         {
@@ -189,5 +176,38 @@ public class UserPlantService
             }
         }
         return result;
+    }
+    
+    private async Task AddPlantToUser(int plantId, int userId)
+    {
+        var userPlant = new UserPlant
+        {
+            PlantId = plantId,
+            UserId = userId
+        };
+
+        _db.UserPlants.Add(userPlant);
+        await _db.SaveChangesAsync();
+    }
+    private void ValidateOwnerId(string? ownerId)
+    {
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            _logger.LogError("OwnerId is null or empty.");
+            throw new ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
+        }
+    }
+
+    private async Task<bool> PlantAlreadyAdded(int userId, int plantId)
+    {
+        return await _db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId);
+    }
+
+    private void DoesUserIdHaveValue(int? userId)
+    {
+        if (!userId.HasValue)
+        {
+            throw new ArgumentNullException(nameof(userId), "UserId cannot be null.");
+        }
     }
 }

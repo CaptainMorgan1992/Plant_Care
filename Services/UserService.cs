@@ -1,11 +1,12 @@
 ﻿using Auth0_Blazor.Data;
 using Auth0_Blazor.Models;
+using Auth0_Blazor.Services.IService;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace Auth0_Blazor.Services;
 
-public class UserService
+public class UserService : IUserService
 {
     private readonly AuthenticationStateProvider _authStateProvider;
     private readonly ILogger<UserService> _logger;
@@ -89,7 +90,7 @@ public class UserService
 
     }
     
-    private async Task SaveUserDetailsToDb(string userId, string username)
+    public async Task SaveUserDetailsToDb(string userId, string username)
     {
         var newUser = new User
         {
