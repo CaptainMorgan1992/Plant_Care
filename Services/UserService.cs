@@ -28,12 +28,20 @@ public class UserService : IUserService
         var user = authState.User;
         var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
+        userId = DoesUserIdHaveValue(userId);
+        
+        
+        return userId;
+    }
+    
+    private string? DoesUserIdHaveValue(string? userId)
+    {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            _logger.LogInformation("UserId is missing");
+            _logger.LogWarning("No userId found. User details will not be saved.");
             return null;
         }
-        
+
         return userId;
     }
     
@@ -79,15 +87,17 @@ public class UserService : IUserService
             _logger.LogWarning("No userId found. User details will not be saved.");
             return;
         }
-
-        var exists = await _db.Users.AnyAsync(u => u.OwnerId == userId);
-
-        if (!exists)
+        
+        if (!await DoesUserExist(userId))
         {
             await SaveUserDetailsToDb(userId, username);
             _logger.LogInformation("User {Username} was saved.", username);
         }
+    }
 
+    private async Task<bool> DoesUserExist(string userId)
+    {
+        return await _db.Users.AnyAsync(u => u.OwnerId == userId);
     }
     
     public async Task SaveUserDetailsToDb(string userId, string username)

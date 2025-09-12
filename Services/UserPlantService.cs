@@ -28,13 +28,9 @@ public class UserPlantService
         await _userService.SaveUserOnClick();
         var ownerId = await _userService.GetUserAuth0IdAsync();
         ValidateOwnerId(ownerId);
-
         var validOwnerId = ownerId!;
-        
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-
         DoesUserIdHaveValue(userId);
-        
         var validUserId = userId!;
 
         if (await PlantAlreadyAdded(validUserId.Value, plantId))
@@ -50,39 +46,25 @@ public class UserPlantService
     public async Task<List<UserPlant>> GetUserPlantsAsync()
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
-
         ValidateOwnerId(ownerId);
-
         var validOwnerId = ownerId!;
-        
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-
         DoesUserIdHaveValue(userId);
-        var validUserId = userId!;
-
-        return await _db.UserPlants
-            .Where(up => up.UserId == validUserId.Value)
-            .Include(up => up.Plant)
-            .ToListAsync();
+        var validUserId = userId!.Value;
+        var userPlants =  await GetAllPlantsForUserById(validUserId);
+        return userPlants;
     }
-
+    
     public async Task RemovePlantFromUserHouseholdAsync(int plantId)
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
-
         ValidateOwnerId(ownerId);
-
         var validOwnerId = ownerId!;
-        
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-
         DoesUserIdHaveValue(userId);
-        var validUserId = userId!;
-        
-        // Search for the first matching UserPlant entry.
-        // This is a 'LINQ' and entity framework transfers this automaticlally to SQL.
-        var userPlant = await _db.UserPlants
-            .FirstOrDefaultAsync(up => up.UserId == validUserId && up.PlantId == plantId);
+        var validUserId = userId!.Value;
+
+        var userPlant = await DoesUserHavePlantAsync(plantId, validUserId);
 
         if (userPlant != null)
         {
@@ -90,49 +72,23 @@ public class UserPlantService
             await _db.SaveChangesAsync();
             _logger.LogInformation("PlantId {PlantId} has been deleted from user.", plantId);
         }
-        else
-        {
-            _logger.LogInformation("PlantId {PlantId} has not been deleted from user. UserPlant {userPlant} cannot be found.", plantId, userPlant);
-        }
     }
+    
+    
     public async Task<List<UserPlant>> GetTop6UserPlantsAsync()
     {
         // Get the most saved PlantIds (grouped and ordered by count)
-        var topPlantIds = await _db.UserPlants
-            .GroupBy(up => up.PlantId)
-            .OrderByDescending(g => g.Count())
-            .Select(g => g.Key)
-            .Take(6)
-            .ToListAsync();
+        var topPlantIds = await FetchTopUserPlantIdsAsync();
 
         // Get UserPlant entries for these PlantIds (one per PlantId)
-        var topUserPlants = await _db.UserPlants
-            .Where(up => topPlantIds.Contains(up.PlantId))
-            .Include(up => up.Plant)
-            .GroupBy(up => up.PlantId)
-            .Select(g => g.First())
-            .ToListAsync();
+        var topUserPlants = await FetchTopUserPlantEntriesAsync(topPlantIds);
 
         if (topUserPlants.Count < 6)
         {
             var existingPlantIds = topUserPlants.Select(up => up.PlantId).ToHashSet();
-            var remainingPlants = await _db.Plants
-                .Where(p => !existingPlantIds.Contains(p.Id))
-                .ToListAsync();
-
-            var randomPlants = remainingPlants
-                .OrderBy(_ => Guid.NewGuid())
-                .Take(6 - topUserPlants.Count)
-                .ToList();
-
-            topUserPlants.AddRange(
-                randomPlants.Select(plant => new UserPlant
-                {
-                    PlantId = plant.Id,
-                    Plant = plant,
-                    UserId = 0
-                })
-            );
+            var remainingPlants = await RandomizeRemainingPlantsAsync(existingPlantIds);
+            var randomPlants = RandomizeRemainingPlantsAsync(remainingPlants, topUserPlants);
+            topUserPlants = CreateNewListOfUserPlants(topUserPlants, randomPlants);
         }
 
         return topUserPlants;
@@ -155,17 +111,17 @@ public class UserPlantService
         var allUsers = await _db.Users.ToListAsync();
         foreach (var user in allUsers)
         {
-            var userPlants = await _db.UserPlants
+            var userPlants = await GetAllPlantsForUserById(user.Id);/*_db.UserPlants
                 .Where(up => up.UserId == user.Id)
                 .Include(up => up.Plant)
-                .ToListAsync();
-            
-            var groupedPlants = userPlants
+                .ToListAsync();*/
+
+            var groupedPlants = GroupPlantsByWateringNeedsAndReturnDictionary(userPlants);/*userPlants
                 .Where(up => up.Plant != null)
                 .GroupBy(up => up.Plant!.WaterFrequency)
                 .ToDictionary(
                     g => g.Key,
-                    g => g.Select(up => up.Plant!).ToList());
+                    g => g.Select(up => up.Plant!).ToList());*/
 
             foreach (var kvp in groupedPlants)
             {
@@ -178,7 +134,26 @@ public class UserPlantService
         return result;
     }
     
-    private async Task AddPlantToUser(int plantId, int userId)
+    private async Task<List<int>> FetchTopUserPlantIdsAsync()
+    {
+        return await _db.UserPlants
+            .GroupBy(up => up.PlantId)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
+            .Take(6)
+            .ToListAsync();
+    }
+    
+    public async Task<List<UserPlant>> FetchTopUserPlantEntriesAsync(List<int> topPlantIds)
+    {
+        return await _db.UserPlants
+            .Where(up => topPlantIds.Contains(up.PlantId))
+            .Include(up => up.Plant)
+            .GroupBy(up => up.PlantId)
+            .Select(g => g.First())
+            .ToListAsync();
+    }
+    public async Task AddPlantToUser(int plantId, int userId)
     {
         var userPlant = new UserPlant
         {
@@ -189,7 +164,7 @@ public class UserPlantService
         _db.UserPlants.Add(userPlant);
         await _db.SaveChangesAsync();
     }
-    private void ValidateOwnerId(string? ownerId)
+    public void ValidateOwnerId(string? ownerId)
     {
         if (string.IsNullOrWhiteSpace(ownerId))
         {
@@ -198,16 +173,76 @@ public class UserPlantService
         }
     }
 
-    private async Task<bool> PlantAlreadyAdded(int userId, int plantId)
+    public async Task<bool> PlantAlreadyAdded(int userId, int plantId)
     {
         return await _db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId);
     }
 
-    private void DoesUserIdHaveValue(int? userId)
+    public static void DoesUserIdHaveValue(int? userId)
     {
         if (!userId.HasValue)
         {
             throw new ArgumentNullException(nameof(userId), "UserId cannot be null.");
         }
     }
+    
+    public async Task <List<UserPlant>> GetAllPlantsForUserById(int validUserId)
+    {
+        return await _db.UserPlants
+            .Where(up => up.UserId == validUserId)
+            .Include(up => up.Plant)
+            .ToListAsync();
+    }
+    
+    public async Task<UserPlant?> DoesUserHavePlantAsync(int plantId, int validUserId)
+    {
+        var userPlant = await _db.UserPlants
+            .FirstOrDefaultAsync(up => up.UserId == validUserId && up.PlantId == plantId);
+
+        if (userPlant != null)
+            return userPlant;
+
+        _logger.LogInformation("UserId {UserId} does not have PlantId {PlantId}.", validUserId, plantId);
+        return null;
+    }
+    
+    public async Task<List<Plant>> RandomizeRemainingPlantsAsync(HashSet<int> existingPlantIds)
+    {
+        return await _db.Plants
+            .Where(p => !existingPlantIds.Contains(p.Id))
+            .ToListAsync();
+    }
+    
+    public static List<Plant> RandomizeRemainingPlantsAsync(List<Plant> remainingPlants, List<UserPlant> topUserPlants)
+    {
+        return remainingPlants
+            .OrderBy(_ => Guid.NewGuid())
+            .Take(6 - topUserPlants.Count)
+            .ToList();
+    }
+    
+    public static List<UserPlant> CreateNewListOfUserPlants(List<UserPlant> topUserPlants, List<Plant> randomPlants)
+    {
+        topUserPlants.AddRange(
+            randomPlants.Select(plant => new UserPlant
+            {
+                PlantId = plant.Id,
+                Plant = plant,
+                UserId = 0
+            })
+        );
+
+        return topUserPlants;
+    }
+    
+    public static Dictionary<WaterFrequency, List<Plant>> GroupPlantsByWateringNeedsAndReturnDictionary(List<UserPlant> userPlants)
+    {
+        return userPlants
+            .Where(up => up.Plant != null)
+            .GroupBy(up => up.Plant!.WaterFrequency)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(up => up.Plant!).ToList());
+    }
+    
 }
