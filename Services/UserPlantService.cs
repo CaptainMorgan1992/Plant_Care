@@ -111,25 +111,33 @@ public class UserPlantService
         var allUsers = await _db.Users.ToListAsync();
         foreach (var user in allUsers)
         {
-            var userPlants = await GetAllPlantsForUserById(user.Id);/*_db.UserPlants
-                .Where(up => up.UserId == user.Id)
-                .Include(up => up.Plant)
-                .ToListAsync();*/
-
-            var groupedPlants = GroupPlantsByWateringNeedsAndReturnDictionary(userPlants);/*userPlants
-                .Where(up => up.Plant != null)
-                .GroupBy(up => up.Plant!.WaterFrequency)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(up => up.Plant!).ToList());*/
-
+            var userPlants = await GetAllPlantsForUserById(user.Id);
+            var groupedPlants = GroupPlantsByWateringNeedsAndReturnDictionary(userPlants);
+            
+            result = AddUserGroupedPlantsToDictionary(result, groupedPlants, user);/*
             foreach (var kvp in groupedPlants)
             {
                 if (!result.ContainsKey(kvp.Key))
                     result[kvp.Key] = new List<(User, List<Plant>)>();
 
                 result[kvp.Key].Add((user, kvp.Value));
-            }
+            }*/
+        }
+        return result;
+    }
+    
+    public Dictionary<WaterFrequency, List<(User, List<Plant>)>> 
+        AddUserGroupedPlantsToDictionary(
+            Dictionary<WaterFrequency, List<(User, List<Plant>)>> result,
+            Dictionary<WaterFrequency, List<Plant>> groupedPlants,
+            User user)
+    {
+        foreach (var kvp in groupedPlants)
+        {
+            if (!result.ContainsKey(kvp.Key))
+                result[kvp.Key] = new List<(User, List<Plant>)>();
+
+            result[kvp.Key].Add((user, kvp.Value));
         }
         return result;
     }
