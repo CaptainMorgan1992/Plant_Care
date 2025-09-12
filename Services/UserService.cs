@@ -30,7 +30,6 @@ public class UserService : IUserService
 
         userId = DoesUserIdHaveValue(userId);
         
-        
         return userId;
     }
     
