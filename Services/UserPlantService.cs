@@ -2,12 +2,13 @@
 using Auth0_Blazor.Data;
 using Auth0_Blazor.Enums;
 using Auth0_Blazor.Models;
+using Auth0_Blazor.Services.IService;
 using Microsoft.EntityFrameworkCore;
 using Quartz.Util;
 
 namespace Auth0_Blazor.Services;
 
-public class UserPlantService
+public class UserPlantService : IUserPlantService
 {
     private readonly ApplicationDbContext _db;
     private readonly UserService _userService;
@@ -86,7 +87,7 @@ public class UserPlantService
         if (topUserPlants.Count < 6)
         {
             var existingPlantIds = topUserPlants.Select(up => up.PlantId).ToHashSet();
-            var remainingPlants = await RandomizeRemainingPlantsAsync(existingPlantIds);
+            var remainingPlants = await FetchRemainingPlantsAsync(existingPlantIds);
             var randomPlants = RandomizeRemainingPlantsAsync(remainingPlants, topUserPlants);
             topUserPlants = CreateNewListOfUserPlants(topUserPlants, randomPlants);
         }
@@ -109,19 +110,13 @@ public class UserPlantService
         var result = new Dictionary<WaterFrequency, List<(User user, List<Plant>)>>();
         
         var allUsers = await _db.Users.ToListAsync();
+        
         foreach (var user in allUsers)
         {
             var userPlants = await GetAllPlantsForUserById(user.Id);
             var groupedPlants = GroupPlantsByWateringNeedsAndReturnDictionary(userPlants);
             
-            result = AddUserGroupedPlantsToDictionary(result, groupedPlants, user);/*
-            foreach (var kvp in groupedPlants)
-            {
-                if (!result.ContainsKey(kvp.Key))
-                    result[kvp.Key] = new List<(User, List<Plant>)>();
-
-                result[kvp.Key].Add((user, kvp.Value));
-            }*/
+            result = AddUserGroupedPlantsToDictionary(result, groupedPlants, user);
         }
         return result;
     }
@@ -142,7 +137,7 @@ public class UserPlantService
         return result;
     }
     
-    private async Task<List<int>> FetchTopUserPlantIdsAsync()
+    public async Task<List<int>> FetchTopUserPlantIdsAsync()
     {
         return await _db.UserPlants
             .GroupBy(up => up.PlantId)
@@ -186,7 +181,7 @@ public class UserPlantService
         return await _db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId);
     }
 
-    public static void DoesUserIdHaveValue(int? userId)
+    public void DoesUserIdHaveValue(int? userId)
     {
         if (!userId.HasValue)
         {
@@ -214,14 +209,14 @@ public class UserPlantService
         return null;
     }
     
-    public async Task<List<Plant>> RandomizeRemainingPlantsAsync(HashSet<int> existingPlantIds)
+    public async Task<List<Plant>> FetchRemainingPlantsAsync(HashSet<int> existingPlantIds)
     {
         return await _db.Plants
             .Where(p => !existingPlantIds.Contains(p.Id))
             .ToListAsync();
     }
     
-    public static List<Plant> RandomizeRemainingPlantsAsync(List<Plant> remainingPlants, List<UserPlant> topUserPlants)
+    public List<Plant> RandomizeRemainingPlantsAsync(List<Plant> remainingPlants, List<UserPlant> topUserPlants)
     {
         return remainingPlants
             .OrderBy(_ => Guid.NewGuid())
@@ -229,7 +224,7 @@ public class UserPlantService
             .ToList();
     }
     
-    public static List<UserPlant> CreateNewListOfUserPlants(List<UserPlant> topUserPlants, List<Plant> randomPlants)
+    public List<UserPlant> CreateNewListOfUserPlants(List<UserPlant> topUserPlants, List<Plant> randomPlants)
     {
         topUserPlants.AddRange(
             randomPlants.Select(plant => new UserPlant
@@ -243,7 +238,7 @@ public class UserPlantService
         return topUserPlants;
     }
     
-    public static Dictionary<WaterFrequency, List<Plant>> GroupPlantsByWateringNeedsAndReturnDictionary(List<UserPlant> userPlants)
+    public Dictionary<WaterFrequency, List<Plant>> GroupPlantsByWateringNeedsAndReturnDictionary(List<UserPlant> userPlants)
     {
         return userPlants
             .Where(up => up.Plant != null)
