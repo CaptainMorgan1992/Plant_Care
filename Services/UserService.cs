@@ -119,5 +119,13 @@ public class UserService : IUserService
             throw new ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
         }
     }
+    
+    public void DoesUserIdHaveValue(int? userId)
+    {
+        if (!userId.HasValue)
+        {
+            throw new ArgumentNullException(nameof(userId), "UserId cannot be null.");
+        }
+    }
 
 }

@@ -28,8 +28,6 @@ public interface IUserPlantService
     
     Task<bool> PlantAlreadyAdded(int userId, int plantId);
     
-    void DoesUserIdHaveValue(int? userId);
-    
     Task<List<UserPlant>> GetAllPlantsForUserById(int userId);
 
     Task<UserPlant?> DoesUserHavePlantAsync(int plantId, int validUserId);

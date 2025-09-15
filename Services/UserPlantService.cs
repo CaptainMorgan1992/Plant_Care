@@ -31,7 +31,7 @@ public class UserPlantService : IUserPlantService
         _userService.ValidateOwnerId(ownerId);
         var validOwnerId = ownerId!;
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        DoesUserIdHaveValue(userId);
+        _userService.DoesUserIdHaveValue(userId);
         var validUserId = userId!;
 
         if (await PlantAlreadyAdded(validUserId.Value, plantId))
@@ -50,7 +50,7 @@ public class UserPlantService : IUserPlantService
         _userService.ValidateOwnerId(ownerId);
         var validOwnerId = ownerId!;
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        DoesUserIdHaveValue(userId);
+        _userService.DoesUserIdHaveValue(userId);
         var validUserId = userId!.Value;
         var userPlants =  await GetAllPlantsForUserById(validUserId);
         return userPlants;
@@ -62,7 +62,7 @@ public class UserPlantService : IUserPlantService
         _userService.ValidateOwnerId(ownerId);
         var validOwnerId = ownerId!;
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        DoesUserIdHaveValue(userId);
+        _userService.DoesUserIdHaveValue(userId);
         var validUserId = userId!.Value;
 
         var userPlant = await DoesUserHavePlantAsync(plantId, validUserId);
@@ -167,26 +167,10 @@ public class UserPlantService : IUserPlantService
         _db.UserPlants.Add(userPlant);
         await _db.SaveChangesAsync();
     }
-    /*public void ValidateOwnerId(string? ownerId)
-    {
-        if (string.IsNullOrWhiteSpace(ownerId))
-        {
-            _logger.LogError("OwnerId is null or empty.");
-            throw new ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
-        }
-    }*/
 
     public async Task<bool> PlantAlreadyAdded(int userId, int plantId)
     {
         return await _db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId);
-    }
-
-    public void DoesUserIdHaveValue(int? userId)
-    {
-        if (!userId.HasValue)
-        {
-            throw new ArgumentNullException(nameof(userId), "UserId cannot be null.");
-        }
     }
     
     public async Task <List<UserPlant>> GetAllPlantsForUserById(int validUserId)
