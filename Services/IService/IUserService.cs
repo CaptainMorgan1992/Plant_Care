@@ -9,6 +9,7 @@ public interface IUserService
     Task SaveUserOnClick();
     Task SaveUserDetailsToDb(string userId, string userName);
     void DoesUserIdHaveValue(int? userId);
+    bool IsUserIdNullOrWhiteSpace(string? userId);
 
 
 }

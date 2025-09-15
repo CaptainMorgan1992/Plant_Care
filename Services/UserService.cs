@@ -81,22 +81,31 @@ public class UserService : IUserService
         var userId = await GetUserAuth0IdAsync();
         var username = await FetchCurrentUserAsync();
         
-        if (string.IsNullOrWhiteSpace(userId))
+        var validUserId = IsUserIdNullOrWhiteSpace(userId);
+        if (validUserId)
         {
-            _logger.LogWarning("No userId found. User details will not be saved.");
-            return;
-        }
-        
-        if (!await DoesUserExist(userId))
-        {
-            await SaveUserDetailsToDb(userId, username);
-            _logger.LogInformation("User {Username} was saved.", username);
+            if (!await DoesUserExist(userId!))
+            {
+                await SaveUserDetailsToDb(userId!, username);
+                _logger.LogInformation("User {Username} was saved.", username);
+            }
         }
     }
 
     private async Task<bool> DoesUserExist(string userId)
     {
         return await _db.Users.AnyAsync(u => u.OwnerId == userId);
+    }
+    
+    public bool IsUserIdNullOrWhiteSpace(string? userId)
+    {
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            return true;
+        }
+
+        _logger.LogWarning("No userId found. User details will not be saved.");
+        return false;
     }
     
     public async Task SaveUserDetailsToDb(string userId, string username)
