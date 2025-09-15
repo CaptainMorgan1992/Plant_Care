@@ -110,4 +110,14 @@ public class UserService : IUserService
         _db.Users.Add(newUser);
         await _db.SaveChangesAsync();
     }
+    
+    public void ValidateOwnerId(string? ownerId)
+    {
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            _logger.LogError("OwnerId is null or empty.");
+            throw new ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
+        }
+    }
+
 }

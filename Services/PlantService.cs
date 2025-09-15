@@ -36,10 +36,11 @@ public class PlantService
     public async Task<bool> AddNewPlantAsync(Plant plant, string ownerId)
     {
 
-        if (string.IsNullOrEmpty(ownerId))
+        /*if (string.IsNullOrEmpty(ownerId))
         {
             throw new  ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
-        }
+        }*/
+        _userService.ValidateOwnerId(ownerId);
         
         var isUserAdmin = await _userService.IsUserAdminAsync(ownerId);
 

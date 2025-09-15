@@ -22,4 +22,8 @@
         <Using Include="NUnit.Framework" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Plant_Care.csproj" />
+    </ItemGroup>
+
 </Project>

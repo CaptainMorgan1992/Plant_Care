@@ -28,7 +28,7 @@ public class UserPlantService : IUserPlantService
     {
         await _userService.SaveUserOnClick();
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        ValidateOwnerId(ownerId);
+        _userService.ValidateOwnerId(ownerId);
         var validOwnerId = ownerId!;
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
         DoesUserIdHaveValue(userId);
@@ -47,7 +47,7 @@ public class UserPlantService : IUserPlantService
     public async Task<List<UserPlant>> GetUserPlantsAsync()
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        ValidateOwnerId(ownerId);
+        _userService.ValidateOwnerId(ownerId);
         var validOwnerId = ownerId!;
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
         DoesUserIdHaveValue(userId);
@@ -59,7 +59,7 @@ public class UserPlantService : IUserPlantService
     public async Task RemovePlantFromUserHouseholdAsync(int plantId)
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        ValidateOwnerId(ownerId);
+        _userService.ValidateOwnerId(ownerId);
         var validOwnerId = ownerId!;
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
         DoesUserIdHaveValue(userId);
@@ -167,14 +167,14 @@ public class UserPlantService : IUserPlantService
         _db.UserPlants.Add(userPlant);
         await _db.SaveChangesAsync();
     }
-    public void ValidateOwnerId(string? ownerId)
+    /*public void ValidateOwnerId(string? ownerId)
     {
         if (string.IsNullOrWhiteSpace(ownerId))
         {
             _logger.LogError("OwnerId is null or empty.");
             throw new ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
         }
-    }
+    }*/
 
     public async Task<bool> PlantAlreadyAdded(int userId, int plantId)
     {

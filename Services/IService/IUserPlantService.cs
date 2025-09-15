@@ -26,8 +26,6 @@ public interface IUserPlantService
     
     Task AddPlantToUser(int plantId, int userId);
     
-    void ValidateOwnerId(string? ownerId);
-    
     Task<bool> PlantAlreadyAdded(int userId, int plantId);
     
     void DoesUserIdHaveValue(int? userId);
