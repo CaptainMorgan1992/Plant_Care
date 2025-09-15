@@ -1,11 +1,12 @@
 ﻿using Auth0_Blazor.Data;
 using Auth0_Blazor.Models;
+using Auth0_Blazor.Services.IService;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace Auth0_Blazor.Services;
 
-public class PlantService
+public class PlantService : IPlantService
 {
     private readonly ApplicationDbContext _context;
     private readonly UserService _userService;
@@ -35,11 +36,6 @@ public class PlantService
     
     public async Task<bool> AddNewPlantAsync(Plant plant, string ownerId)
     {
-
-        /*if (string.IsNullOrEmpty(ownerId))
-        {
-            throw new  ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
-        }*/
         _userService.ValidateOwnerId(ownerId);
         
         var isUserAdmin = await _userService.IsUserAdminAsync(ownerId);

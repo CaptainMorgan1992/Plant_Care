@@ -2,7 +2,7 @@
 
 public class UtilityService
 {
-    public static string TruncateText(string text, int maxLength)
+    public string TruncateText(string text, int maxLength)
     {
         if (string.IsNullOrEmpty(text)) return text;
         return text.Length > maxLength ? text.Substring(0, maxLength) + "..." : text;
