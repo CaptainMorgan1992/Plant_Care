@@ -8,7 +8,8 @@ public interface IUserService
     Task<string> FetchCurrentUserAsync();
     Task SaveUserOnClick();
     Task SaveUserDetailsToDb(string userId, string userName);
-    void DoesUserIdHaveValue(int? userId);
+    void DoesUserIdHaveIntValue(int? userId);
+    string? DoesUserIdHaveValue(string? userId);
     bool IsUserIdNullOrWhiteSpace(string? userId);
 
 

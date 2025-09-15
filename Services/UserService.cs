@@ -33,15 +33,15 @@ public class UserService : IUserService
         return userId;
     }
     
-    private string? DoesUserIdHaveValue(string? userId)
+    public string? DoesUserIdHaveValue(string? userId)
     {
-        if (string.IsNullOrWhiteSpace(userId))
+        if (!string.IsNullOrWhiteSpace(userId))
         {
-            _logger.LogWarning("No userId found. User details will not be saved.");
-            return null;
+            return userId;
         }
 
-        return userId;
+        _logger.LogWarning("No userId found. User details will not be saved.");
+        return null;
     }
     
     public async Task<bool> IsUserAdminAsync(string ownerId)
@@ -80,7 +80,6 @@ public class UserService : IUserService
     {
         var userId = await GetUserAuth0IdAsync();
         var username = await FetchCurrentUserAsync();
-        
         var validUserId = IsUserIdNullOrWhiteSpace(userId);
         if (validUserId)
         {
@@ -122,14 +121,16 @@ public class UserService : IUserService
     
     public void ValidateOwnerId(string? ownerId)
     {
-        if (string.IsNullOrWhiteSpace(ownerId))
+        if (!string.IsNullOrWhiteSpace(ownerId))
         {
-            _logger.LogError("OwnerId is null or empty.");
-            throw new ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
+            return;
         }
+
+        _logger.LogError("OwnerId is null or empty.");
+        throw new ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
     }
     
-    public void DoesUserIdHaveValue(int? userId)
+    public void DoesUserIdHaveIntValue(int? userId)
     {
         if (!userId.HasValue)
         {

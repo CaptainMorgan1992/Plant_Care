@@ -31,12 +31,12 @@ public class UserPlantService : IUserPlantService
         _userService.ValidateOwnerId(ownerId);
         var validOwnerId = ownerId!;
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        _userService.DoesUserIdHaveValue(userId);
+        _userService.DoesUserIdHaveIntValue(userId);
         var validUserId = userId!;
 
         if (await PlantAlreadyAdded(validUserId.Value, plantId))
         {
-            _logger.LogInformation("PlantId {PlantId} is already connected to {UserId}.", plantId, userId.Value);
+            _logger.LogInformation("PlantId {PlantId} is already connected to {UserId}.", plantId, validUserId.Value);
             return;
         }
  
@@ -50,7 +50,7 @@ public class UserPlantService : IUserPlantService
         _userService.ValidateOwnerId(ownerId);
         var validOwnerId = ownerId!;
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        _userService.DoesUserIdHaveValue(userId);
+        _userService.DoesUserIdHaveIntValue(userId);
         var validUserId = userId!.Value;
         var userPlants =  await GetAllPlantsForUserById(validUserId);
         return userPlants;
@@ -62,7 +62,7 @@ public class UserPlantService : IUserPlantService
         _userService.ValidateOwnerId(ownerId);
         var validOwnerId = ownerId!;
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        _userService.DoesUserIdHaveValue(userId);
+        _userService.DoesUserIdHaveIntValue(userId);
         var validUserId = userId!.Value;
 
         var userPlant = await DoesUserHavePlantAsync(plantId, validUserId);

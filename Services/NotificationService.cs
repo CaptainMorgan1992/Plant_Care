@@ -1,5 +1,4 @@
-﻿using Auth0_Blazor.Enums;
-using Auth0_Blazor.Models;
+﻿using Auth0_Blazor.Models;
 using Auth0_Blazor.Services.IService;
 
 namespace Auth0_Blazor.Services;
