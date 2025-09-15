@@ -94,26 +94,23 @@ public class UserServiceTests
     [Test]
     public async Task IsOwnerAdminAsync_ReturnsTrue_IfUserIsAdmin()
     {
-        // Arrange
-        var ownerId = "abc";
-        var users = new List<User>
-        {
-            new User { OwnerId = ownerId, IsAdmin = true }
-        }.AsQueryable();
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // Ny databas varje gång!
+            .Options;
 
-        var dbSetMock = new Mock<DbSet<User>>();
-        dbSetMock.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-        dbSetMock.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-        dbSetMock.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-        dbSetMock.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+        var dbContext = new ApplicationDbContext(options);
+        
+        dbContext.Users.Add(new User { OwnerId = "admin-id", IsAdmin = true });
+        dbContext.Users.Add(new User { OwnerId = "user-id", IsAdmin = false });
+        await dbContext.SaveChangesAsync();
+        
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
 
-        _dbMock.Setup(db => db.Users).Returns(dbSetMock.Object);
+        var isAdmin = await userService.IsUserAdminAsync("admin-id");
+        Assert.That(isAdmin, Is.True);
 
-        // Act
-        var result = await _userService.IsUserAdminAsync(ownerId);
-
-        // Assert
-        Assert.That(result, Is.True);
+        var isUserAdmin = await userService.IsUserAdminAsync("user-id");
+        Assert.That(isUserAdmin, Is.False);
     }
     
     
