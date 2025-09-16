@@ -75,8 +75,7 @@ public class UserService : IUserService
 
         return userName;
     }
-
-    /* This next */
+    
     public async Task SaveUserOnClick()
     {
         var userId = await GetUserAuth0IdAsync();
@@ -92,7 +91,8 @@ public class UserService : IUserService
         }
     }
 
-    private async Task<bool> DoesUserExist(string userId)
+    /* This next */
+    public async Task<bool> DoesUserExist(string userId)
     {
         return await _db.Users.AnyAsync(u => u.OwnerId == userId);
     }

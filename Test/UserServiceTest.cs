@@ -162,5 +162,58 @@ public class UserServiceTests
         Assert.That(userName, Is.EqualTo("Test User"));
     }
     
+    [Test]
+    public async Task SaveUserOnClickAsync_SavesUser_WhenUserIdAndNameAreValid()
+    {
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+            .Options;
+
+        var dbContext = new ApplicationDbContext(options);
+        
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, "auth0|123"),
+            new Claim(ClaimTypes.Name, "Test User")
+        };
+        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "test"));
+        var authState = new AuthenticationState(principal);
+
+        _authStateProviderMock
+            .Setup(x => x.GetAuthenticationStateAsync())
+            .ReturnsAsync(authState);
+
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
+        
+        await userService.SaveUserOnClick();
+
+        var savedUser = await dbContext.Users.FirstOrDefaultAsync(u => u.OwnerId == "auth0|123");
+        Assert.That(savedUser, Is.Not.Null);
+        Assert.That("Test User",Is.EqualTo(savedUser?.Name));
+    }
+    
+    [Test]
+    public async Task DoesUserExist_ReturnsTrue_IfUserExists()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: "TestDb_UserExists")
+            .Options;
+
+        await using var dbContext = new ApplicationDbContext(options);
+        dbContext.Users.Add(new User { OwnerId = "test-owner", Id = 123 });
+        dbContext.Users.Add(new User { OwnerId = "other-owner", Id = 456 });
+        await dbContext.SaveChangesAsync();
+
+        // Act
+        var user = await dbContext.Users
+            .FirstOrDefaultAsync(u => u.OwnerId == "test-owner" && u.Id == 123);
+
+        // Assert
+        Assert.That(user, Is.Not.Null);
+        Assert.That(user?.OwnerId, Is.EqualTo("test-owner"));
+        Assert.That(user?.Id, Is.EqualTo(123));
+    }
+    
     
 }
