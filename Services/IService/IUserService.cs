@@ -5,7 +5,7 @@ public interface IUserService
     Task<string?> GetUserAuth0IdAsync();
     Task<bool> IsUserAdminAsync(string ownerId);
     Task<int?> GetUserIdByOwnerIdAsync(string ownerId);
-    Task<string> FetchCurrentUserAsync();
+    Task<string> FetchCurrentUserNameAsync();
     Task SaveUserOnClick();
     Task SaveUserDetailsToDb(string userId, string userName);
     void DoesUserIdHaveIntValue(int? userId);

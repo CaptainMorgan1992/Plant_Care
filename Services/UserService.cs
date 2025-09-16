@@ -62,7 +62,7 @@ public class UserService : IUserService
         return user?.Id;
     }
 
-    public async Task<string> FetchCurrentUserAsync()
+    public async Task<string> FetchCurrentUserNameAsync()
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
@@ -76,10 +76,11 @@ public class UserService : IUserService
         return userName;
     }
 
+    /* This next */
     public async Task SaveUserOnClick()
     {
         var userId = await GetUserAuth0IdAsync();
-        var username = await FetchCurrentUserAsync();
+        var username = await FetchCurrentUserNameAsync();
         var validUserId = IsUserIdNullOrWhiteSpace(userId);
         if (validUserId)
         {
