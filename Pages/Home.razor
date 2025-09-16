@@ -4,11 +4,12 @@
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Icons
 @using Auth0_Blazor.Records
-@inject PlantService PlantService
+@using Auth0_Blazor.Services.IService
+@inject IPlantService PlantService
+@inject IUserService UserService
 @inject NavigationManager NavigationManager
 @inject ILogger<Home> Logger
-@inject UserPlantService UserPlantService
-@inject UserService UserService
+@inject IUserPlantService UserPlantService
 @inject UtilityService UtilityService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject UserStateService UserStateService

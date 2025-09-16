@@ -2,9 +2,10 @@
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Icons
-@inject PlantService PlantService
-@inject UserService UserService
-@inject UserPlantService UserPlantService
+@using Auth0_Blazor.Services.IService
+@inject IPlantService PlantService
+@inject IUserService UserService
+@inject IUserPlantService UserPlantService
 @inject UtilityService UtilityService
 @inject NavigationManager NavigationManager
 

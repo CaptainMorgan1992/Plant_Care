@@ -1,9 +1,10 @@
 ﻿@using Auth0_Blazor.Services
+@using Auth0_Blazor.Services.IService
 @using MudBlazor
 @inject NavigationManager NavigationManager
 @inject ILogger<NavigationDrawer> Logger
 @inject UtilityService UtilityService
-@inject UserService UserService
+@inject IUserService UserService
 @inject AuthenticationStateProvider AuthStateProvider
 @namespace Components
 

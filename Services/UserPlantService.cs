@@ -11,12 +11,12 @@ namespace Auth0_Blazor.Services;
 public class UserPlantService : IUserPlantService
 {
     private readonly ApplicationDbContext _db;
-    private readonly UserService _userService;
+    private readonly IUserService _userService;
     private readonly ILogger<UserPlantService> _logger;
 
     public UserPlantService (
         ApplicationDbContext db,
-        UserService userService,
+        IUserService userService,
         ILogger<UserPlantService> logger)
     {
         _db = db;

@@ -1,6 +1,7 @@
 ﻿using Auth0_Blazor.Enums;
 using Auth0_Blazor.Models;
 using Auth0_Blazor.Services;
+using Auth0_Blazor.Services.IService;
 using Quartz;
 
 namespace Auth0_Blazor.Jobs;
@@ -9,12 +10,12 @@ public class WateringNotificationJob : IJob
 {
     private readonly NotificationService _notificationService;
     private readonly ILogger<WateringNotificationJob> _logger;
-    private readonly UserPlantService _userPlantService;
+    private readonly IUserPlantService _userPlantService;
     
     public WateringNotificationJob (
         NotificationService notificationService,
         ILogger<WateringNotificationJob> logger,
-        UserPlantService userPlantService)
+        IUserPlantService userPlantService)
     {
         _notificationService = notificationService;
         _logger = logger;

@@ -3,9 +3,10 @@
 @using Auth0_Blazor.Enums
 @using System.ComponentModel.DataAnnotations
 @using Auth0_Blazor.Models
+@using Auth0_Blazor.Services.IService
 @using Fluxor
-@inject UserService UserService
-@inject PlantService PlantService
+@inject IUserService UserService
+@inject IPlantService PlantService
 @inject ILogger<AddNewPlant> Logger
 
 @if (_isUserAdmin)
