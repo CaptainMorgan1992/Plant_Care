@@ -5,6 +5,7 @@
 @inject ILogger<SavedPlants> Logger
 @inject Services.UserService UserService
 @inject Services.UserPlantService UserPlantService
+@inject Services.UtilityService UtilityService
 @inject PlantService PlantService
 @inject NavigationManager NavigationManager
 
@@ -59,7 +60,7 @@
         UserPlants = await UserPlantService.GetUserPlantsAsync();
     }
     
-    private static string Truncate(string text, int maxLength)
+    public string Truncate(string text, int maxLength)
     {
         return UtilityService.TruncateText(text, maxLength);
     }

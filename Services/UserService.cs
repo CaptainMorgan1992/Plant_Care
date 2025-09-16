@@ -1,11 +1,12 @@
 ﻿using Auth0_Blazor.Data;
 using Auth0_Blazor.Models;
+using Auth0_Blazor.Services.IService;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace Auth0_Blazor.Services;
 
-public class UserService
+public class UserService : IUserService
 {
     private readonly AuthenticationStateProvider _authStateProvider;
     private readonly ILogger<UserService> _logger;
@@ -27,13 +28,20 @@ public class UserService
         var user = authState.User;
         var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            _logger.LogInformation("UserId is missing");
-            return null;
-        }
+        userId = DoesUserIdHaveValue(userId);
         
         return userId;
+    }
+    
+    public string? DoesUserIdHaveValue(string? userId)
+    {
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            return userId;
+        }
+
+        _logger.LogWarning("No userId found. User details will not be saved.");
+        return null;
     }
     
     public async Task<bool> IsUserAdminAsync(string ownerId)
@@ -54,7 +62,7 @@ public class UserService
         return user?.Id;
     }
 
-    public async Task<string> FetchCurrentUserAsync()
+    public async Task<string> FetchCurrentUserNameAsync()
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
@@ -68,28 +76,39 @@ public class UserService
         return userName;
     }
 
+    /* This next */
     public async Task SaveUserOnClick()
     {
         var userId = await GetUserAuth0IdAsync();
-        var username = await FetchCurrentUserAsync();
-        
-        if (string.IsNullOrWhiteSpace(userId))
+        var username = await FetchCurrentUserNameAsync();
+        var validUserId = IsUserIdNullOrWhiteSpace(userId);
+        if (validUserId)
         {
-            _logger.LogWarning("No userId found. User details will not be saved.");
-            return;
+            if (!await DoesUserExist(userId!))
+            {
+                await SaveUserDetailsToDb(userId!, username);
+                _logger.LogInformation("User {Username} was saved.", username);
+            }
         }
+    }
 
-        var exists = await _db.Users.AnyAsync(u => u.OwnerId == userId);
-
-        if (!exists)
-        {
-            await SaveUserDetailsToDb(userId, username);
-            _logger.LogInformation("User {Username} was saved.", username);
-        }
-
+    private async Task<bool> DoesUserExist(string userId)
+    {
+        return await _db.Users.AnyAsync(u => u.OwnerId == userId);
     }
     
-    private async Task SaveUserDetailsToDb(string userId, string username)
+    public bool IsUserIdNullOrWhiteSpace(string? userId)
+    {
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            return true;
+        }
+
+        _logger.LogWarning("No userId found. User details will not be saved.");
+        return false;
+    }
+    
+    public async Task SaveUserDetailsToDb(string userId, string username)
     {
         var newUser = new User
         {
@@ -100,4 +119,24 @@ public class UserService
         _db.Users.Add(newUser);
         await _db.SaveChangesAsync();
     }
+    
+    public void ValidateOwnerId(string? ownerId)
+    {
+        if (!string.IsNullOrWhiteSpace(ownerId))
+        {
+            return;
+        }
+
+        _logger.LogError("OwnerId is null or empty.");
+        throw new ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
+    }
+    
+    public void DoesUserIdHaveIntValue(int? userId)
+    {
+        if (!userId.HasValue)
+        {
+            throw new ArgumentNullException(nameof(userId), "UserId cannot be null.");
+        }
+    }
+
 }

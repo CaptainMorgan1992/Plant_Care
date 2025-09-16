@@ -19,7 +19,7 @@ public class ApplicationDbContext : DbContext
     // DbSet properties represent the tables in the database
     public DbSet<Plant> Plants { get; set; }
     
-    public DbSet<User> Users { get; set; }
+    public DbSet<User> Users { get; set; } = null!;
     
     public DbSet<UserPlant> UserPlants { get; set; }
 }

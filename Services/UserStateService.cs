@@ -1,8 +1,9 @@
 ﻿using Auth0_Blazor.Records;
+using Auth0_Blazor.Services.IService;
 
 namespace Auth0_Blazor.Services;
 
-public class UserStateService
+public class UserStateService : IUserStateService
 {
     
     ILogger<UserStateService> _logger;

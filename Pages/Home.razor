@@ -95,7 +95,7 @@
         return userPlants.Select(up => up.PlantId).ToHashSet();
     }
         
-    private static string Truncate(string text, int maxLength)
+    public string Truncate(string text, int maxLength)
     {
         return UtilityService.TruncateText(text, maxLength);
     }
