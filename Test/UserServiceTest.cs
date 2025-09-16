@@ -262,5 +262,15 @@ public class UserServiceTests
         Assert.Throws<ArgumentNullException>(() => _userService.ValidateOwnerId(null));
     }
     
+    [Test]
+    public void DoesUserIdHaveIntValue_ThrowsException_IfUserIdIsNull()
+    {
+        int? userIdWithValue = 1;
+        int? userIdWithoutValue = null;
+
+        Assert.DoesNotThrow(() => _userService.DoesUserIdHaveIntValue(userIdWithValue));
+        Assert.Throws<ArgumentNullException>(() => _userService.DoesUserIdHaveIntValue(userIdWithoutValue));
+    }
+    
     
 }

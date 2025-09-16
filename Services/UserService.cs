@@ -119,7 +119,6 @@ public class UserService : IUserService
         await _db.SaveChangesAsync();
     }
     
-    /* This next */
     public void ValidateOwnerId(string? ownerId)
     {
         if (!string.IsNullOrWhiteSpace(ownerId))
@@ -131,6 +130,7 @@ public class UserService : IUserService
         throw new ArgumentNullException(nameof(ownerId), "OwnerId cannot be null or empty.");
     }
     
+    /* This next */
     public void DoesUserIdHaveIntValue(int? userId)
     {
         if (!userId.HasValue)
