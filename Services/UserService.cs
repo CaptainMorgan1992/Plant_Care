@@ -90,8 +90,7 @@ public class UserService : IUserService
             }
         }
     }
-
-    /* This next */
+    
     public async Task<bool> DoesUserExist(string userId)
     {
         return await _db.Users.AnyAsync(u => u.OwnerId == userId);
@@ -120,6 +119,7 @@ public class UserService : IUserService
         await _db.SaveChangesAsync();
     }
     
+    /* This next */
     public void ValidateOwnerId(string? ownerId)
     {
         if (!string.IsNullOrWhiteSpace(ownerId))

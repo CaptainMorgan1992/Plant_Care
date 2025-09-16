@@ -215,5 +215,52 @@ public class UserServiceTests
         Assert.That(user?.Id, Is.EqualTo(123));
     }
     
+    [Test]
+    public void IsUserIdNullOrWhiteSpace_ReturnsFalse_IfUserIdIsNullOrWhiteSpace()
+    {
+        var resultForEmptyString = _userService.IsUserIdNullOrWhiteSpace(" ");
+        Assert.That(resultForEmptyString, Is.False);
+        
+        var resultForValidString = _userService.IsUserIdNullOrWhiteSpace("test");
+        Assert.That(resultForValidString, Is.True);
+        
+        _loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) =>
+                    v.ToString() == "No userId found. User details will not be saved."),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+    
+    [Test]
+    public async Task SaveUserDetailsToDb_AddsUserToDatabase()
+    {
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+            .Options;
+
+        await using var dbContext = new ApplicationDbContext(options);
+        
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
+        
+        await userService.SaveUserDetailsToDb("auth0|456", "New User");
+
+        var savedUser = await dbContext.Users.FirstOrDefaultAsync(u => u.OwnerId == "auth0|456");
+        Assert.That(savedUser, Is.Not.Null);
+        Assert.That(savedUser?.Name, Is.EqualTo("New User"));
+    }
+    
+    [Test]
+    public void DoesOwnerIdHaveStringValue_ThrowsException_IfOwnerIdIsNull()
+    {
+        const string ownerId = "OwnerIdTest";
+
+        Assert.DoesNotThrow(() => _userService.ValidateOwnerId(ownerId));
+        Assert.Throws<ArgumentNullException>(() => _userService.ValidateOwnerId(null));
+    }
+    
     
 }
