@@ -149,7 +149,7 @@ public class UserPlantServiceTest
         // 1. Mock topPlantIds
         var topPlantIds = new List<int> { 1, 2, 3, 4, 5, 6 };
 
-        // 2. Mock topUserPlants (en per PlantId)
+        // 2. Mock topUserPlants (one per PlantId)
         var topUserPlants = topPlantIds
             .Select(id => new UserPlant { PlantId = id, UserId = 100 + id })
             .ToList();
@@ -158,8 +158,7 @@ public class UserPlantServiceTest
         _userPlantServiceMock.Setup(x => x.FetchTopUserPlantIdsAsync()).ReturnsAsync(topPlantIds);
         _userPlantServiceMock.Setup(x => x.FetchTopUserPlantEntriesAsync(topPlantIds)).ReturnsAsync(topUserPlants);
 
-        // 4. Om <6: mocka övriga
-        // (I detta test, vi har redan 6, så dessa metoder ska inte anropas — men vi kan ändå lägga in en Verify om du vill)
+        // 4. If <6: mock the rest (not needed in this test)
 
         // Act
         var result = await _userPlantService.GetTop6UserPlantsAsync();
@@ -262,10 +261,9 @@ public class UserPlantServiceTest
         var plant1 = new Plant { Id = 10, Name = "Rose", WaterFrequency = WaterFrequency.High, Description = "A description", Origin = "Origin1", ImageUrl = "https://example.com/rose.jpg" };
         var plant2 = new Plant { Id = 11, Name = "Cactus", WaterFrequency = WaterFrequency.Normal, Description = "A description", Origin = "Origin1", ImageUrl = "https://example.com/rose.jpg" };
 
-        // Vi börjar med ett tomt result-dictionary
         var result = new Dictionary<WaterFrequency, List<(User, List<Plant>)>>();
 
-        // Gruppindelning för användaren (t.ex. hennes växter)
+        // Creates two groups of plants for the user
         var groupedPlants = new Dictionary<WaterFrequency, List<Plant>>
         {
             { WaterFrequency.High, new List<Plant> { plant1 } },
@@ -283,7 +281,7 @@ public class UserPlantServiceTest
         Assert.That(updated.ContainsKey(WaterFrequency.High));
         Assert.That(updated.ContainsKey(WaterFrequency.Normal));
 
-        // Kontrollera att Alice och hennes växter finns i rätt grupper
+        // Control that Alice and her plants are in the right groups
         var dailyGroup = updated[WaterFrequency.High];
         Assert.That(dailyGroup.Count, Is.EqualTo(1));
         Assert.That(dailyGroup[0].Item1.Name, Is.EqualTo("Alice"));
@@ -404,9 +402,67 @@ public class UserPlantServiceTest
         // Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Count, Is.EqualTo(6));
-        // Kontrollera att topp 6 PlantId kommer i rätt ordning (mest till minst förekommande)
+        // Control that top 6 ids are correct
         var expected = new List<int> { 1, 2, 3, 4, 5, 6 };
         CollectionAssert.AreEqual(expected, result);
+    }
+    
+    [Test]
+    public async Task FetchTopUserPlantEntriesAsync_ReturnsFirstEntryOfEachPlantId()
+    {
+        // Arrange
+        var plant1 = new Plant {
+            Id = 1,
+            Name = "Lily",
+            WaterFrequency = WaterFrequency.Normal,
+            Description = "A beautiful lily",
+            Origin = "Origin1",
+            ImageUrl = "https://example.com/lily.jpg"
+        };
+        var plant2 = new Plant {
+            Id = 2,
+            Name = "Rose",
+            WaterFrequency = WaterFrequency.Normal,
+            Description = "A beautiful Rose",
+            Origin = "Origin2",
+            ImageUrl = "https://example.com/rose.jpg"
+        };
+        var plant3 = new Plant {
+            Id = 3,
+            Name = "Fern",
+            WaterFrequency = WaterFrequency.High,
+            Description = "A beautiful fern",
+            Origin = "Origin3",
+            ImageUrl = "https://example.com/fern.jpg"
+        };
+
+        _db.Plants.AddRange(plant1, plant2, plant3);
+
+        var userPlants = new List<UserPlant>
+        {
+            new UserPlant { Id = 10, UserId = 1, PlantId = 1, Plant = plant1 },
+            new UserPlant { Id = 11, UserId = 2, PlantId = 1, Plant = plant1 }, // another user, same plant
+            new UserPlant { Id = 12, UserId = 1, PlantId = 2, Plant = plant2 },
+            new UserPlant { Id = 13, UserId = 3, PlantId = 3, Plant = plant3 }
+        };
+        _db.UserPlants.AddRange(userPlants);
+        await _db.SaveChangesAsync();
+
+        var topPlantIds = new List<int> { 1, 2 };
+
+        // Act
+        var result = await _userPlantService.FetchTopUserPlantEntriesAsync(topPlantIds);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count, Is.EqualTo(2));
+        Assert.That(result.Any(up => up.PlantId == 1));
+        Assert.That(result.Any(up => up.PlantId == 2));
+        // Should be the first userPlant for each plantId (by insertion order)
+        Assert.That(result.Any(up => up.Id == 10));
+        Assert.That(result.Any(up => up.Id == 12));
+        // Should not include plantId 3
+        Assert.That(result.All(up => topPlantIds.Contains(up.PlantId)), Is.True);
     }
     
 
