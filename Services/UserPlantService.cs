@@ -33,15 +33,8 @@ public class UserPlantService : IUserPlantService
         var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
         _userService.DoesUserIdHaveIntValue(userId);
         var validUserId = userId!;
-
-        if (await PlantAlreadyAdded(validUserId.Value, plantId))
-        {
-            _logger.LogInformation("PlantId {PlantId} is already connected to {UserId}.", plantId, validUserId.Value);
-            return;
-        }
  
         await AddPlantToUser(plantId, validUserId.Value);
-        
     }
     
     public async Task<List<UserPlant>> GetUserPlantsAsync()
@@ -166,11 +159,6 @@ public class UserPlantService : IUserPlantService
 
         _db.UserPlants.Add(userPlant);
         await _db.SaveChangesAsync();
-    }
-
-    public async Task<bool> PlantAlreadyAdded(int userId, int plantId)
-    {
-        return await _db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId);
     }
     
     public async Task <List<UserPlant>> GetAllPlantsForUserById(int validUserId)
