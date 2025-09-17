@@ -139,4 +139,21 @@ public class UserService : IUserService
         }
     }
 
+    public async Task<int?> IsValidUserByOwnerIdAsync(string? ownerId)
+    {
+        try
+        {
+            ValidateOwnerId(ownerId);
+            var validOwnerId = ownerId!;
+            var userId = await GetUserIdByOwnerIdAsync(validOwnerId);
+            DoesUserIdHaveIntValue(userId);
+            return userId;
+        }
+        catch
+        {
+            _logger.LogError("UserId is not valid. Logging from IsValidUserByOwnerIdAsync.");
+            return null;
+        }
+    }
+
 }

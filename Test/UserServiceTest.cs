@@ -272,5 +272,27 @@ public class UserServiceTests
         Assert.Throws<ArgumentNullException>(() => _userService.DoesUserIdHaveIntValue(userIdWithoutValue));
     }
     
+    [Test]
+    public async Task IsValidUserByOwnerIdAsync_ReturnsUserId_IfUserExists()
+    {
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+            .Options;
+
+        var dbContext = new ApplicationDbContext(options);
+        
+        dbContext.Users.Add(new User { Id = 1, OwnerId = "owner-1" });
+        dbContext.Users.Add(new User { Id = 2, OwnerId = "owner-2" });
+        await dbContext.SaveChangesAsync();
+        
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
+        
+        var userId = await userService.IsValidUserByOwnerIdAsync("owner-1");
+        Assert.That(userId, Is.EqualTo(1));
+        
+        var nonExistentUserId = await userService.IsValidUserByOwnerIdAsync("non-existent-owner");
+        Assert.That(nonExistentUserId, Is.Null);
+    }
+    
     
 }

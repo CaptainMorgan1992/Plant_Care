@@ -28,10 +28,7 @@ public class UserPlantService : IUserPlantService
     {
         await _userService.SaveUserOnClick();
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        _userService.ValidateOwnerId(ownerId);
-        var validOwnerId = ownerId!;
-        var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        _userService.DoesUserIdHaveIntValue(userId);
+        var userId = await _userService.IsValidUserByOwnerIdAsync(ownerId);
         var validUserId = userId!;
  
         await AddPlantToUser(plantId, validUserId.Value);
@@ -40,11 +37,9 @@ public class UserPlantService : IUserPlantService
     public async Task<List<UserPlant>> GetUserPlantsAsync()
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        _userService.ValidateOwnerId(ownerId);
-        var validOwnerId = ownerId!;
-        var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        _userService.DoesUserIdHaveIntValue(userId);
+        var userId = await _userService.IsValidUserByOwnerIdAsync(ownerId);
         var validUserId = userId!.Value;
+        
         var userPlants =  await GetAllPlantsForUserById(validUserId);
         return userPlants;
     }
@@ -52,10 +47,7 @@ public class UserPlantService : IUserPlantService
     public async Task RemovePlantFromUserHouseholdAsync(int plantId)
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        _userService.ValidateOwnerId(ownerId);
-        var validOwnerId = ownerId!;
-        var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        _userService.DoesUserIdHaveIntValue(userId);
+        var userId = await _userService.IsValidUserByOwnerIdAsync(ownerId);
         var validUserId = userId!.Value;
 
         var userPlant = await DoesUserHavePlantAsync(plantId, validUserId);
