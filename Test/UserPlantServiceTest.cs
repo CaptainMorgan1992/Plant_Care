@@ -39,6 +39,12 @@ public class UserPlantServiceTest
         };
         _userPlantService = _userPlantServiceMock.Object;
     }
+    
+    [TearDown]
+    public void TearDown()
+    {
+        _db?.Dispose();
+    }
 
     [Test]
     public async Task AddPlantToUserHouseholdAsync_CallsAddPlantToUserWithExpectedArguments()
@@ -248,9 +254,160 @@ public class UserPlantServiceTest
         _userPlantServiceMock.Verify(x => x.GroupPlantsByWateringNeedsAndReturnDictionary(It.IsAny<List<UserPlant>>()), Times.Exactly(2));
     }
     
-    [TearDown]
-    public void TearDown()
+    [Test]
+    public void AddUserGroupedPlantsToDictionary_AddsUserAndPlantsToCorrectGroups()
     {
-        _db?.Dispose();
+        // Arrange
+        var user = new User { Id = 1, Name = "Alice", OwnerId = "Owner1" };
+        var plant1 = new Plant { Id = 10, Name = "Rose", WaterFrequency = WaterFrequency.High, Description = "A description", Origin = "Origin1", ImageUrl = "https://example.com/rose.jpg" };
+        var plant2 = new Plant { Id = 11, Name = "Cactus", WaterFrequency = WaterFrequency.Normal, Description = "A description", Origin = "Origin1", ImageUrl = "https://example.com/rose.jpg" };
+
+        // Vi börjar med ett tomt result-dictionary
+        var result = new Dictionary<WaterFrequency, List<(User, List<Plant>)>>();
+
+        // Gruppindelning för användaren (t.ex. hennes växter)
+        var groupedPlants = new Dictionary<WaterFrequency, List<Plant>>
+        {
+            { WaterFrequency.High, new List<Plant> { plant1 } },
+            { WaterFrequency.Normal, new List<Plant> { plant2 } }
+        };
+
+        var service = new UserPlantService(_db, _userService.Object, _loggerMock.Object); // eller din klass där metoden finns
+
+        // Act
+        var updated = service.AddUserGroupedPlantsToDictionary(result, groupedPlants, user);
+
+        // Assert
+        Assert.That(updated, Is.Not.Null);
+        Assert.That(updated.Count, Is.EqualTo(2));
+        Assert.That(updated.ContainsKey(WaterFrequency.High));
+        Assert.That(updated.ContainsKey(WaterFrequency.Normal));
+
+        // Kontrollera att Alice och hennes växter finns i rätt grupper
+        var dailyGroup = updated[WaterFrequency.High];
+        Assert.That(dailyGroup.Count, Is.EqualTo(1));
+        Assert.That(dailyGroup[0].Item1.Name, Is.EqualTo("Alice"));
+        Assert.That(dailyGroup[0].Item2.Count, Is.EqualTo(1));
+        Assert.That(dailyGroup[0].Item2[0].Name, Is.EqualTo("Rose"));
+
+        var weeklyGroup = updated[WaterFrequency.Normal];
+        Assert.That(weeklyGroup.Count, Is.EqualTo(1));
+        Assert.That(weeklyGroup[0].Item1.Name, Is.EqualTo("Alice"));
+        Assert.That(weeklyGroup[0].Item2.Count, Is.EqualTo(1));
+        Assert.That(weeklyGroup[0].Item2[0].Name, Is.EqualTo("Cactus"));
     }
+    
+    
+    [Test]
+    public async Task FetchTopUserPlantIdsAsync_Returns6MostPopularPlantIds()
+    {
+        // Arrange
+        var userPlants = new List<UserPlant>
+        {
+            new UserPlant
+            {
+                Id = 1,
+                UserId = 1,
+                PlantId = 1,
+                Plant = new Plant
+                {
+                    Id = 1,
+                    Name = "Rose",
+                    WaterFrequency = WaterFrequency.High,
+                    Description = "A red rose",
+                    Origin = "Origin1",
+                    ImageUrl = "https://example.com/rose.jpg"
+                }
+            },
+            new UserPlant
+            {
+                Id = 2,
+                UserId = 2,
+                PlantId = 2,
+                Plant = new Plant
+                {
+                    Id = 2,
+                    Name = "Cactus",
+                    WaterFrequency = WaterFrequency.Normal,
+                    Description = "A small cactus",
+                    Origin = "Origin2",
+                    ImageUrl = "https://example.com/cactus.jpg"
+                }
+            },
+            new UserPlant
+            {
+                Id = 3,
+                UserId = 1,
+                PlantId = 3,
+                Plant = new Plant
+                {
+                    Id = 3,
+                    Name = "Fern",
+                    WaterFrequency = WaterFrequency.High,
+                    Description = "A green fern",
+                    Origin = "Origin3",
+                    ImageUrl = "https://example.com/fern.jpg"
+                }
+            },
+            new UserPlant
+            {
+                Id = 4,
+                UserId = 3,
+                PlantId = 4,
+                Plant = new Plant
+                {
+                    Id = 4,
+                    Name = "Lily",
+                    WaterFrequency = WaterFrequency.Normal,
+                    Description = "A beautiful lily",
+                    Origin = "Origin4",
+                    ImageUrl = "https://example.com/lily.jpg"
+                }
+            },
+            new UserPlant
+            {
+                Id = 5,
+                UserId = 4,
+                PlantId = 5,
+                Plant = new Plant
+                {
+                    Id = 5,
+                    Name = "Lily",
+                    WaterFrequency = WaterFrequency.Normal,
+                    Description = "A beautiful lily",
+                    Origin = "Origin4",
+                    ImageUrl = "https://example.com/lily.jpg"
+                }
+            },
+            new UserPlant
+            {
+                Id = 6,
+                UserId = 5,
+                PlantId = 6,
+                Plant = new Plant
+                {
+                    Id = 6,
+                    Name = "Lily",
+                    WaterFrequency = WaterFrequency.Normal,
+                    Description = "A beautiful lily",
+                    Origin = "Origin4",
+                    ImageUrl = "https://example.com/lily.jpg"
+                }
+            }
+        };
+        _db.UserPlants.AddRange(userPlants);
+        await _db.SaveChangesAsync();
+
+        // Act
+        var result = await _userPlantService.FetchTopUserPlantIdsAsync();
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count, Is.EqualTo(6));
+        // Kontrollera att topp 6 PlantId kommer i rätt ordning (mest till minst förekommande)
+        var expected = new List<int> { 1, 2, 3, 4, 5, 6 };
+        CollectionAssert.AreEqual(expected, result);
+    }
+    
+
 }
