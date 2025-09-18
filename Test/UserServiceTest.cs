@@ -107,8 +107,8 @@ public class UserServiceTests
 
         var dbContext = new ApplicationDbContext(options);
         
-        dbContext.Users.Add(new User { OwnerId = "admin-id", IsAdmin = true });
-        dbContext.Users.Add(new User { OwnerId = "user-id", IsAdmin = false });
+        dbContext.Users.Add(new User { OwnerId = "admin-id", IsAdmin = true, Name = "Admin User" });
+        dbContext.Users.Add(new User { OwnerId = "user-id", IsAdmin = false, Name = "Regular User" });
         await dbContext.SaveChangesAsync();
         
         var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
@@ -129,8 +129,8 @@ public class UserServiceTests
 
         var dbContext = new ApplicationDbContext(options);
         
-        dbContext.Users.Add(new User { Id = 1, OwnerId = "owner-1" });
-        dbContext.Users.Add(new User { Id = 2, OwnerId = "owner-2" });
+        dbContext.Users.Add(new User { Id = 1, OwnerId = "owner-1", Name = "Owner One" });
+        dbContext.Users.Add(new User { Id = 2, OwnerId = "owner-2", Name = "Owner Two" });
         await dbContext.SaveChangesAsync();
         
         var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
@@ -201,8 +201,8 @@ public class UserServiceTests
             .Options;
 
         await using var dbContext = new ApplicationDbContext(options);
-        dbContext.Users.Add(new User { OwnerId = "test-owner", Id = 123 });
-        dbContext.Users.Add(new User { OwnerId = "other-owner", Id = 456 });
+        dbContext.Users.Add(new User { OwnerId = "test-owner", Id = 123, Name = "Test User" });
+        dbContext.Users.Add(new User { OwnerId = "other-owner", Id = 456, Name = "Other User" });
         await dbContext.SaveChangesAsync();
 
         // Act

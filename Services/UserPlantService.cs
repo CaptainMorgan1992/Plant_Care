@@ -161,7 +161,7 @@ public class UserPlantService : IUserPlantService
         var userPlant = new UserPlant
         {
             PlantId = plantId,
-            UserId = userId
+            UserId = userId, 
         };
 
         _db.UserPlants.Add(userPlant);

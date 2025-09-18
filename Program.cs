@@ -26,7 +26,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Add services to the container.
@@ -43,6 +43,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenProvider>();
 builder.Services.AddSingleton<NotificationService>();
 builder.Services.AddScoped<UserStateService>();
+
+
 
 
 /*

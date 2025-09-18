@@ -1,9 +1,7 @@
 ﻿@page "/"
-@using System.Security.Principal
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Icons
-@using Auth0_Blazor.Records
 @inject PlantService PlantService
 @inject NavigationManager NavigationManager
 @inject ILogger<Home> Logger
@@ -16,7 +14,7 @@
 <PageTitle>Home</PageTitle>
 
 <div class="grid-layout-cards">
-    @foreach (var userPlant in TopUserPlants)
+    @foreach (var userPlant in _topUserPlants)
     {
         var plant = userPlant.Plant;
         if (plant == null) continue;
@@ -62,14 +60,14 @@
 </div>
 
 @code {
-    public required List<UserPlant> TopUserPlants;
+    private List<UserPlant> _topUserPlants = [];
     private HashSet<int> _userPlantIds = [];
     private bool _ownerExists;
     private List<UserPlant> _userPlants = [];
 
     protected override async Task OnInitializedAsync()
     {
-        TopUserPlants = await UserPlantService.GetTop6UserPlantsAsync();
+        _topUserPlants = await UserPlantService.GetTop6UserPlantsAsync();
         var ownerId = await UserService.GetUserAuth0IdAsync();
 
         if (!string.IsNullOrWhiteSpace(ownerId))

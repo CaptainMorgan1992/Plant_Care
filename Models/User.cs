@@ -10,7 +10,7 @@ public class User
     public required string OwnerId { get; set; } // This is the Auth0 user ID
     
     [MaxLength(70)]
-    public string? Name { get; set; }
+    public required string Name { get; set; }
     
     public List<UserPlant>? Plants { get; set; }
     
