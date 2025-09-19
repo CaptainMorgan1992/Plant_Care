@@ -4,7 +4,6 @@ namespace Auth0_Blazor.Services.IService;
 
 public interface INotificationService
 {
-    
     event Action<string, string>? OnWateringNotify;
     void ShowWateringNotification(User user, string plantName);
 }

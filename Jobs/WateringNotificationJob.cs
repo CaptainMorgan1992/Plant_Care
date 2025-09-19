@@ -13,7 +13,7 @@ public class WateringNotificationJob : IJob
     private readonly IUserPlantService _userPlantService;
     
     public WateringNotificationJob (
-        NotificationService notificationService,
+        INotificationService notificationService,
         ILogger<WateringNotificationJob> logger,
         IUserPlantService userPlantService)
     {

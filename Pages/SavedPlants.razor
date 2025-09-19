@@ -16,11 +16,10 @@
             Household Plants
         </MudText>
         <div class="grid-layout-cards">
-            @foreach(var userplant in UserPlants) {
-                if (userplant.Plant == null)
-                {
-                    throw new KeyNotFoundException($"Plant not found for UserPlant with ID {userplant.Id}.");
-                }
+            @foreach (var userplant in UserPlants)
+            {
+                var plant = userplant.Plant;
+                if (plant == null) continue;
                 {
                     <div style="flex: 1 1 300px; max-width: 300px">
                         <MudCard Class="m-2 rounded-3 d-flex plantcard">
@@ -28,8 +27,8 @@
                                 <MudCardMedia Image="@userplant.Plant.ImageUrl" Height="250" Class="object-fit-cover"/>
                                 <MudButton Class="button-bottom-right"
                                            OnClick="@(() => RemovePlantFromHousehold(@userplant.Plant.Id))">
-                                        <DeleteSymbol/>
-                                    </MudButton>
+                                    <DeleteSymbol/>
+                                </MudButton>
                             </div>
                             <MudCardContent Class="d-flex flex-column align-items-center justify-content-center gap-3">
                                 <MudText Typo="Typo.h5">
@@ -54,14 +53,14 @@
 
 @code {
 
-    public required List<UserPlant> UserPlants;
+    public required List<UserPlant> UserPlants = [];
 
     protected override async Task OnInitializedAsync()
     {
         UserPlants = await UserPlantService.GetUserPlantsAsync();
     }
     
-    public string Truncate(string text, int maxLength)
+    public string? Truncate(string text, int maxLength)
     {
         return UtilityService.TruncateText(text, maxLength);
     }
