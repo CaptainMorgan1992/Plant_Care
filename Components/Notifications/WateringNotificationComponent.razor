@@ -1,8 +1,8 @@
-﻿@using Auth0_Blazor.Services
-@using Auth0_Blazor.Icons
-@inject NotificationService NotificationService
+﻿@using Auth0_Blazor.Icons
+@using Auth0_Blazor.Services.IService
+@inject INotificationService NotificationService
 @inject ILogger<WateringNotificationComponent> Logger
-@inject UserStateService UserStateService
+@inject IUserStateService UserStateService
 @namespace Components.Notifications
 
 

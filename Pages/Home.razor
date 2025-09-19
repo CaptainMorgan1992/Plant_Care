@@ -2,14 +2,15 @@
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Services
 @using Auth0_Blazor.Icons
-@inject PlantService PlantService
+@using Auth0_Blazor.Services.IService
+@inject IPlantService PlantService
 @inject NavigationManager NavigationManager
 @inject ILogger<Home> Logger
-@inject UserPlantService UserPlantService
-@inject UserService UserService
-@inject UtilityService UtilityService
+@inject IUserPlantService UserPlantService
+@inject IUtilityService UtilityService
 @inject AuthenticationStateProvider AuthStateProvider
-@inject UserStateService UserStateService
+@inject IUserStateService UserStateService
+@inject IUserService UserService
 
 <PageTitle>Home</PageTitle>
 
@@ -93,7 +94,7 @@
         return userPlants.Select(up => up.PlantId).ToHashSet();
     }
         
-    public string Truncate(string text, int maxLength)
+    public string? Truncate(string text, int maxLength)
     {
         return UtilityService.TruncateText(text, maxLength);
     }

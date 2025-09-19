@@ -2,5 +2,6 @@
 
 public interface IUserStateService
 {
+    string? OwnerId { get; }
     void SetOwnerId(string ownerId);
 }

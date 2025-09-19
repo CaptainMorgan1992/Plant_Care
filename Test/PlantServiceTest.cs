@@ -24,16 +24,22 @@ public class PlantServiceTest
         _loggerMock = new Mock<ILogger<UserService>>();
         _userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, null!);
         _dbMock = new Mock<ApplicationDbContext>();
+        
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        var db = new ApplicationDbContext(options);
+        var dbFactory = new TestDbContextFactory(db);
     }
     
     [Test]
     public async Task FetchAllPlantsFromDb_ShouldReturnPlants()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-
         var dbContext = new ApplicationDbContext(options);
+        var dbFactory = new TestDbContextFactory(dbContext);
         
         dbContext.Plants.Add(new Auth0_Blazor.Models.Plant
             {   Id = 1,
@@ -53,9 +59,9 @@ public class PlantServiceTest
                 WaterFrequency = WaterFrequency.High
             });
         
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
         
-        var plantService = new PlantService(dbContext, _userService);
+        var plantService = new PlantService(dbFactory, _userService);
         var result = await plantService.GetAllPlantsAsync();
         Assert.That(result.Count, Is.EqualTo(2));
     }
@@ -64,10 +70,10 @@ public class PlantServiceTest
     public async Task GetOnePlantById_ShouldReturnPlantObject_OrReturnExceptionIfNotFound()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-
         var dbContext = new ApplicationDbContext(options);
+        var dbFactory = new TestDbContextFactory(dbContext);
         
         dbContext.Plants.Add(new Auth0_Blazor.Models.Plant
         {   Id = 1,
@@ -80,7 +86,7 @@ public class PlantServiceTest
         
         await dbContext.SaveChangesAsync();
         
-        var plantService = new PlantService(dbContext, _userService);
+        var plantService = new PlantService(dbFactory, _userService);
         var result = await plantService.GetPlantByIdAsync(1);
         
         Assert.That(result.Name, Is.EqualTo("Plant1"));
@@ -99,8 +105,11 @@ public class PlantServiceTest
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
         var dbContext = new ApplicationDbContext(options);
-        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
-        var plantService = new PlantService(dbContext, userService);
+        var dbFactory = new TestDbContextFactory(dbContext);
+        
+        
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbFactory);
+        var plantService = new PlantService(dbFactory, userService);
         
         var newPlant = new Auth0_Blazor.Models.Plant
         {

@@ -12,5 +12,7 @@ public interface IUserService
     string? DoesUserIdHaveValue(string? userId);
     bool IsUserIdNullOrWhiteSpace(string? userId);
     Task<bool> DoesUserExist(string userId);
-    
+    Task<int?> IsValidUserByOwnerIdAsync(string? ownerId);
+    void ValidateOwnerId(string? ownerId);
+
 }

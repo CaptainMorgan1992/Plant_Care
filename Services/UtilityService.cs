@@ -1,10 +1,12 @@
-﻿namespace Auth0_Blazor.Services;
+﻿using Auth0_Blazor.Services.IService;
 
-public class UtilityService
+namespace Auth0_Blazor.Services;
+
+public class UtilityService : IUtilityService
 {
-    public string TruncateText(string text, int maxLength)
+    public string? TruncateText(string? text, int maxLength)
     {
         if (string.IsNullOrEmpty(text)) return text;
-        return text.Length > maxLength ? text.Substring(0, maxLength) + "..." : text;
+        return text.Length > maxLength ? string.Concat(text.AsSpan(0, maxLength), "...") : text;
     }
 }

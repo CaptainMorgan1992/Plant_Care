@@ -1,7 +1,8 @@
 ﻿@page "/plants/{id:int}"
 @using Auth0_Blazor.Models
 @using Auth0_Blazor.Services
-@inject PlantService PlantService
+@using Auth0_Blazor.Services.IService
+@inject IPlantService PlantService
 
 <MudPaper Class="plant-details-container mx-auto my-4" Elevation="0" Style="max-width:1000px;">
     <div class="image-container">

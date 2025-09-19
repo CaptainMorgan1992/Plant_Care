@@ -1,9 +1,10 @@
 ﻿@using Auth0_Blazor.Services
+@using Auth0_Blazor.Services.IService
 @using MudBlazor
 @inject NavigationManager NavigationManager
 @inject ILogger<NavigationDrawer> Logger
 @inject UtilityService UtilityService
-@inject UserService UserService
+@inject IUserService UserService
 @inject AuthenticationStateProvider AuthStateProvider
 @namespace Components
 
@@ -61,7 +62,7 @@
         }
     }
     
-    public string Truncate(string text, int maxLength)
+    private string? Truncate(string text, int maxLength)
     {
         return UtilityService.TruncateText(text, maxLength);
     }

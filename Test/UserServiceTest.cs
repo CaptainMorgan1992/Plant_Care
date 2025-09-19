@@ -102,16 +102,16 @@ public class UserServiceTests
     public async Task IsOwnerAdminAsync_ReturnsTrue_IfUserIsAdmin()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-
         var dbContext = new ApplicationDbContext(options);
+        var dbFactory = new TestDbContextFactory(dbContext);
         
         dbContext.Users.Add(new User { OwnerId = "admin-id", IsAdmin = true, Name = "Admin User" });
         dbContext.Users.Add(new User { OwnerId = "user-id", IsAdmin = false, Name = "Regular User" });
         await dbContext.SaveChangesAsync();
         
-        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbFactory);
 
         var isAdmin = await userService.IsUserAdminAsync("admin-id");
         Assert.That(isAdmin, Is.True);
@@ -124,16 +124,16 @@ public class UserServiceTests
     public async Task GetUserIdByOwnerIdAsync_ReturnsUserId_IfUserExists()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-
         var dbContext = new ApplicationDbContext(options);
+        var dbFactory = new TestDbContextFactory(dbContext);
         
         dbContext.Users.Add(new User { Id = 1, OwnerId = "owner-1", Name = "Owner One" });
         dbContext.Users.Add(new User { Id = 2, OwnerId = "owner-2", Name = "Owner Two" });
         await dbContext.SaveChangesAsync();
         
-        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbFactory);
         
         var userId = await userService.GetUserIdByOwnerIdAsync("owner-1");
         Assert.That(userId, Is.EqualTo(1));
@@ -166,10 +166,10 @@ public class UserServiceTests
     public async Task SaveUserOnClickAsync_SavesUser_WhenUserIdAndNameAreValid()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-
         var dbContext = new ApplicationDbContext(options);
+        var dbFactory = new TestDbContextFactory(dbContext);
         
         var claims = new[]
         {
@@ -183,7 +183,7 @@ public class UserServiceTests
             .Setup(x => x.GetAuthenticationStateAsync())
             .ReturnsAsync(authState);
 
-        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbFactory);
         
         await userService.SaveUserOnClick();
 
@@ -239,12 +239,12 @@ public class UserServiceTests
     public async Task SaveUserDetailsToDb_AddsUserToDatabase()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-
-        await using var dbContext = new ApplicationDbContext(options);
+        var dbContext = new ApplicationDbContext(options);
+        var dbFactory = new TestDbContextFactory(dbContext);
         
-        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbContext);
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbFactory);
         
         await userService.SaveUserDetailsToDb("auth0|456", "New User");
 
@@ -270,6 +270,28 @@ public class UserServiceTests
 
         Assert.DoesNotThrow(() => _userService.DoesUserIdHaveIntValue(userIdWithValue));
         Assert.Throws<ArgumentNullException>(() => _userService.DoesUserIdHaveIntValue(userIdWithoutValue));
+    }
+    
+    [Test]
+    public async Task IsValidUserByOwnerIdAsync_ReturnsUserId_IfUserExists()
+    {
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        var dbContext = new ApplicationDbContext(options);
+        var dbFactory = new TestDbContextFactory(dbContext);
+        
+        dbContext.Users.Add(new User { Id = 1, OwnerId = "owner-1", Name = "Owner One" });
+        dbContext.Users.Add(new User { Id = 2, OwnerId = "owner-2", Name = "Owner Two" });
+        await dbContext.SaveChangesAsync();
+        
+        var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbFactory);
+        
+        var userId = await userService.IsValidUserByOwnerIdAsync("owner-1");
+        Assert.That(userId, Is.EqualTo(1));
+        
+        var nonExistentUserId = await userService.IsValidUserByOwnerIdAsync("non-existent-owner");
+        Assert.That(nonExistentUserId, Is.Null);
     }
     
     

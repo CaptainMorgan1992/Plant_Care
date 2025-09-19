@@ -8,9 +8,9 @@ namespace Auth0_Blazor.Services;
 public class PlantService : IPlantService
 {
     private readonly IDbContextFactory<ApplicationDbContext> _factory;
-    private readonly UserService _userService;
+    private readonly IUserService _userService;
 
-    public PlantService(IDbContextFactory<ApplicationDbContext> factory, UserService userService)
+    public PlantService(IDbContextFactory<ApplicationDbContext> factory, IUserService userService)
     {
         _factory = factory;
         _userService = userService;

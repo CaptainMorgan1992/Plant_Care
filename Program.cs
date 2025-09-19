@@ -33,17 +33,17 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Add services to the container.
 builder.Services.AddMudServices();
 
-builder.Services.AddScoped<PlantService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UtilityService>();
-builder.Services.AddScoped<UserPlantService>();
+builder.Services.AddScoped<IPlantService, PlantService>();
+builder.Services.AddScoped<IUtilityService, UtilityService>();
+builder.Services.AddScoped<IUserPlantService, UserPlantService>();
 
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenProvider>();
-builder.Services.AddSingleton<NotificationService>();
-builder.Services.AddScoped<UserStateService>();
+builder.Services.AddSingleton<INotificationService, NotificationService>();
+builder.Services.AddScoped<IUserStateService, UserStateService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 

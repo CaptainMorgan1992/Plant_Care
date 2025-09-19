@@ -2,5 +2,5 @@
 
 public interface IUtilityService
 {
-    string TruncateText(string text, int maxLength);
+    string? TruncateText(string? text, int maxLength);
 }

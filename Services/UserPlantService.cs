@@ -11,12 +11,12 @@ namespace Auth0_Blazor.Services;
 public class UserPlantService : IUserPlantService
 {
     private readonly IDbContextFactory<ApplicationDbContext> _factory;
-    private readonly UserService _userService;
+    private readonly IUserService _userService;
     private readonly ILogger<UserPlantService> _logger;
 
     public UserPlantService (
         IDbContextFactory<ApplicationDbContext> factory,
-        UserService userService,
+        IUserService userService,
         ILogger<UserPlantService> logger)
     {
         _factory = factory;
@@ -24,45 +24,31 @@ public class UserPlantService : IUserPlantService
         _logger = logger;
     }
     
-    public async Task AddPlantToUserHouseholdAsync(int plantId)
+    public virtual async Task AddPlantToUserHouseholdAsync(int plantId)
     {
         await _userService.SaveUserOnClick();
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        _userService.ValidateOwnerId(ownerId);
-        var validOwnerId = ownerId!;
-        var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        _userService.DoesUserIdHaveIntValue(userId);
+        var userId = await _userService.IsValidUserByOwnerIdAsync(ownerId);
         var validUserId = userId!;
-
-        if (await PlantAlreadyAdded(validUserId.Value, plantId))
-        {
-            _logger.LogInformation("PlantId {PlantId} is already connected to {UserId}.", plantId, validUserId.Value);
-            return;
-        }
  
         await AddPlantToUser(plantId, validUserId.Value);
         
     }
     
-    public async Task<List<UserPlant>> GetUserPlantsAsync()
+    public virtual async Task<List<UserPlant>> GetUserPlantsAsync()
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        _userService.ValidateOwnerId(ownerId);
-        var validOwnerId = ownerId!;
-        var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        _userService.DoesUserIdHaveIntValue(userId);
+        var userId = await _userService.IsValidUserByOwnerIdAsync(ownerId);
         var validUserId = userId!.Value;
+        
         var userPlants =  await GetAllPlantsForUserById(validUserId);
         return userPlants;
     }
     
-    public async Task RemovePlantFromUserHouseholdAsync(int plantId)
+    public virtual async Task RemovePlantFromUserHouseholdAsync(int plantId)
     {
         var ownerId = await _userService.GetUserAuth0IdAsync();
-        _userService.ValidateOwnerId(ownerId);
-        var validOwnerId = ownerId!;
-        var userId = await _userService.GetUserIdByOwnerIdAsync(validOwnerId);
-        _userService.DoesUserIdHaveIntValue(userId);
+        var userId = await _userService.IsValidUserByOwnerIdAsync(ownerId);
         var validUserId = userId!.Value;
 
         var userPlant = await DoesUserHavePlantAsync(plantId, validUserId);
@@ -77,7 +63,7 @@ public class UserPlantService : IUserPlantService
     }
     
     
-    public async Task<List<UserPlant>> GetTop6UserPlantsAsync()
+    public virtual async Task<List<UserPlant>> GetTop6UserPlantsAsync()
     {
         // Get the most saved PlantIds (grouped and ordered by count)
         var topPlantIds = await FetchTopUserPlantIdsAsync();
@@ -105,7 +91,7 @@ public class UserPlantService : IUserPlantService
      * Returns the populated dictionary where each waterfrequency has a list of users + their plants with the appropriate frequency.
      */
 
-    public async Task<Dictionary<WaterFrequency, List<(User user, List<Plant> plants)>>>
+    public virtual async Task<Dictionary<WaterFrequency, List<(User user, List<Plant> plants)>>>
         GetUsersWithPlantsGroupedByWaterFrequencyAsync()
     {
         var result = new Dictionary<WaterFrequency, List<(User user, List<Plant>)>>();
@@ -123,7 +109,7 @@ public class UserPlantService : IUserPlantService
         return result;
     }
     
-    public Dictionary<WaterFrequency, List<(User, List<Plant>)>> 
+    public virtual Dictionary<WaterFrequency, List<(User, List<Plant>)>> 
         AddUserGroupedPlantsToDictionary(
             Dictionary<WaterFrequency, List<(User, List<Plant>)>> result,
             Dictionary<WaterFrequency, List<Plant>> groupedPlants,
@@ -139,7 +125,7 @@ public class UserPlantService : IUserPlantService
         return result;
     }
     
-    public async Task<List<int>> FetchTopUserPlantIdsAsync()
+    public virtual async Task<List<int>> FetchTopUserPlantIdsAsync()
     {
         await using var db = _factory.CreateDbContext();
         return await db.UserPlants
@@ -150,7 +136,7 @@ public class UserPlantService : IUserPlantService
             .ToListAsync();
     }
     
-    public async Task<List<UserPlant>> FetchTopUserPlantEntriesAsync(List<int> topPlantIds)
+    public virtual async Task<List<UserPlant>> FetchTopUserPlantEntriesAsync(List<int> topPlantIds)
     {
         await using var db = _factory.CreateDbContext();
         return await db.UserPlants
@@ -160,7 +146,8 @@ public class UserPlantService : IUserPlantService
             .Select(g => g.First())
             .ToListAsync();
     }
-    public async Task AddPlantToUser(int plantId, int userId)
+    
+    public virtual async Task AddPlantToUser(int plantId, int userId)
     {
         var userPlant = new UserPlant
         {
@@ -172,14 +159,8 @@ public class UserPlantService : IUserPlantService
         db.UserPlants.Add(userPlant);
         await db.SaveChangesAsync();
     }
-
-    public async Task<bool> PlantAlreadyAdded(int userId, int plantId)
-    {
-        await using var db = _factory.CreateDbContext();
-        return await db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId);
-    }
     
-    public async Task <List<UserPlant>> GetAllPlantsForUserById(int validUserId)
+    public virtual async Task <List<UserPlant>> GetAllPlantsForUserById(int validUserId)
     {
         await using var db = _factory.CreateDbContext();
         return await db.UserPlants
@@ -188,7 +169,7 @@ public class UserPlantService : IUserPlantService
             .ToListAsync();
     }
     
-    public async Task<UserPlant?> DoesUserHavePlantAsync(int plantId, int validUserId)
+    public virtual async Task<UserPlant?> DoesUserHavePlantAsync(int plantId, int validUserId)
     {
         await using var db = _factory.CreateDbContext();
         var userPlant = await db.UserPlants
@@ -201,7 +182,7 @@ public class UserPlantService : IUserPlantService
         return null;
     }
     
-    public async Task<List<Plant>> FetchRemainingPlantsAsync(HashSet<int> existingPlantIds)
+    public virtual async Task<List<Plant>> FetchRemainingPlantsAsync(HashSet<int> existingPlantIds)
     {
         await using var db = _factory.CreateDbContext();
         return await db.Plants
@@ -209,7 +190,7 @@ public class UserPlantService : IUserPlantService
             .ToListAsync();
     }
     
-    public List<Plant> RandomizeRemainingPlantsAsync(List<Plant> remainingPlants, List<UserPlant> topUserPlants)
+    public virtual List<Plant> RandomizeRemainingPlantsAsync(List<Plant> remainingPlants, List<UserPlant> topUserPlants)
     {
         return remainingPlants
             .OrderBy(_ => Guid.NewGuid())
@@ -217,7 +198,7 @@ public class UserPlantService : IUserPlantService
             .ToList();
     }
     
-    public List<UserPlant> CreateNewListOfUserPlants(List<UserPlant> topUserPlants, List<Plant> randomPlants)
+    public virtual List<UserPlant> CreateNewListOfUserPlants(List<UserPlant> topUserPlants, List<Plant> randomPlants)
     {
         topUserPlants.AddRange(
             randomPlants.Select(plant => new UserPlant
@@ -231,7 +212,7 @@ public class UserPlantService : IUserPlantService
         return topUserPlants;
     }
     
-    public Dictionary<WaterFrequency, List<Plant>> GroupPlantsByWateringNeedsAndReturnDictionary(List<UserPlant> userPlants)
+    public virtual Dictionary<WaterFrequency, List<Plant>> GroupPlantsByWateringNeedsAndReturnDictionary(List<UserPlant> userPlants)
     {
         return userPlants
             .Where(up => up.Plant != null)
