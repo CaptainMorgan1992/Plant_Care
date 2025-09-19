@@ -10,16 +10,16 @@ public class UserService : IUserService
 {
     private readonly AuthenticationStateProvider _authStateProvider;
     private readonly ILogger<UserService> _logger;
-    private readonly ApplicationDbContext _db;
+    private readonly IDbContextFactory<ApplicationDbContext> _factory;
 
     public UserService (
         AuthenticationStateProvider authStateProvider,
         ILogger<UserService> logger,
-        ApplicationDbContext db)
+        IDbContextFactory<ApplicationDbContext> factory)
     {
         _authStateProvider = authStateProvider;
         _logger = logger;
-        _db = db;
+        _factory = factory;
     }
 
     public async Task<string?> GetUserAuth0IdAsync()
@@ -46,7 +46,8 @@ public class UserService : IUserService
     
     public async Task<bool> IsUserAdminAsync(string ownerId)
     {
-        var user = await _db.Users
+        await using var db = _factory.CreateDbContext();
+        var user = await db.Users
             .Where(u => u.OwnerId == ownerId)
             .FirstOrDefaultAsync();
 
@@ -55,7 +56,8 @@ public class UserService : IUserService
     
     public async Task<int?> GetUserIdByOwnerIdAsync(string ownerId)
     {
-        var user = await _db.Users
+        await using var db = _factory.CreateDbContext();
+        var user = await db.Users
             .Where(u => u.OwnerId == ownerId)
             .FirstOrDefaultAsync();
 
@@ -93,7 +95,8 @@ public class UserService : IUserService
     
     public async Task<bool> DoesUserExist(string userId)
     {
-        return await _db.Users.AnyAsync(u => u.OwnerId == userId);
+        await using var db = _factory.CreateDbContext();
+        return await db.Users.AnyAsync(u => u.OwnerId == userId);
     }
     
     public bool IsUserIdNullOrWhiteSpace(string? userId)
@@ -115,8 +118,9 @@ public class UserService : IUserService
             Name = username
         };
         
-        _db.Users.Add(newUser);
-        await _db.SaveChangesAsync();
+        await using var db = _factory.CreateDbContext();
+        db.Users.Add(newUser);
+        await db.SaveChangesAsync();
     }
     
     public void ValidateOwnerId(string? ownerId)

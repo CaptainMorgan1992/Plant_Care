@@ -7,23 +7,25 @@ namespace Auth0_Blazor.Services;
 
 public class PlantService : IPlantService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IDbContextFactory<ApplicationDbContext> _factory;
     private readonly UserService _userService;
 
-    public PlantService(ApplicationDbContext context, UserService userService)
+    public PlantService(IDbContextFactory<ApplicationDbContext> factory, UserService userService)
     {
-        _context = context;
+        _factory = factory;
         _userService = userService;
     }
 
     public async Task<List<Plant>> GetAllPlantsAsync()
     {
-        return await _context.Plants.ToListAsync();
+        await using var db = _factory.CreateDbContext();
+        return await db.Plants.ToListAsync();
     }
     
     public async Task<Plant> GetPlantByIdAsync(int id)
     {
-        var plant = await _context.Plants.FindAsync(id);
+        await using var db = _factory.CreateDbContext();
+        var plant = await db.Plants.FindAsync(id);
         return plant ?? throw new KeyNotFoundException($"Plant with ID {id} not found.");
     }
     
@@ -37,8 +39,10 @@ public class PlantService : IPlantService
         {
             throw new UnauthorizedAccessException("Only admins can add new plants.");
         }
-        _context.Plants.Add(plant);
-        await _context.SaveChangesAsync();
+        
+        await using var db = _factory.CreateDbContext();
+        db.Plants.Add(plant);
+        await db.SaveChangesAsync();
         return true;
     }
     

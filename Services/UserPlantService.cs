@@ -10,16 +10,16 @@ namespace Auth0_Blazor.Services;
 
 public class UserPlantService : IUserPlantService
 {
-    private readonly ApplicationDbContext _db;
+    private readonly IDbContextFactory<ApplicationDbContext> _factory;
     private readonly UserService _userService;
     private readonly ILogger<UserPlantService> _logger;
 
     public UserPlantService (
-        ApplicationDbContext db,
+        IDbContextFactory<ApplicationDbContext> factory,
         UserService userService,
         ILogger<UserPlantService> logger)
     {
-        _db = db;
+        _factory = factory;
         _userService = userService;
         _logger = logger;
     }
@@ -69,8 +69,9 @@ public class UserPlantService : IUserPlantService
 
         if (userPlant != null)
         {
-            _db.UserPlants.Remove(userPlant);
-            await _db.SaveChangesAsync();
+            await using var db = _factory.CreateDbContext();
+            db.UserPlants.Remove(userPlant);
+            await db.SaveChangesAsync();
             _logger.LogInformation("PlantId {PlantId} has been deleted from user.", plantId);
         }
     }
@@ -109,7 +110,8 @@ public class UserPlantService : IUserPlantService
     {
         var result = new Dictionary<WaterFrequency, List<(User user, List<Plant>)>>();
         
-        var allUsers = await _db.Users.ToListAsync();
+        await using var db = _factory.CreateDbContext();
+        var allUsers = await db.Users.ToListAsync();
         
         foreach (var user in allUsers)
         {
@@ -139,7 +141,8 @@ public class UserPlantService : IUserPlantService
     
     public async Task<List<int>> FetchTopUserPlantIdsAsync()
     {
-        return await _db.UserPlants
+        await using var db = _factory.CreateDbContext();
+        return await db.UserPlants
             .GroupBy(up => up.PlantId)
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
@@ -149,7 +152,8 @@ public class UserPlantService : IUserPlantService
     
     public async Task<List<UserPlant>> FetchTopUserPlantEntriesAsync(List<int> topPlantIds)
     {
-        return await _db.UserPlants
+        await using var db = _factory.CreateDbContext();
+        return await db.UserPlants
             .Where(up => topPlantIds.Contains(up.PlantId))
             .Include(up => up.Plant)
             .GroupBy(up => up.PlantId)
@@ -164,18 +168,21 @@ public class UserPlantService : IUserPlantService
             UserId = userId, 
         };
 
-        _db.UserPlants.Add(userPlant);
-        await _db.SaveChangesAsync();
+        await using var db = _factory.CreateDbContext();
+        db.UserPlants.Add(userPlant);
+        await db.SaveChangesAsync();
     }
 
     public async Task<bool> PlantAlreadyAdded(int userId, int plantId)
     {
-        return await _db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId);
+        await using var db = _factory.CreateDbContext();
+        return await db.UserPlants.AnyAsync(up => up.PlantId == plantId && up.UserId == userId);
     }
     
     public async Task <List<UserPlant>> GetAllPlantsForUserById(int validUserId)
     {
-        return await _db.UserPlants
+        await using var db = _factory.CreateDbContext();
+        return await db.UserPlants
             .Where(up => up.UserId == validUserId)
             .Include(up => up.Plant)
             .ToListAsync();
@@ -183,7 +190,8 @@ public class UserPlantService : IUserPlantService
     
     public async Task<UserPlant?> DoesUserHavePlantAsync(int plantId, int validUserId)
     {
-        var userPlant = await _db.UserPlants
+        await using var db = _factory.CreateDbContext();
+        var userPlant = await db.UserPlants
             .FirstOrDefaultAsync(up => up.UserId == validUserId && up.PlantId == plantId);
 
         if (userPlant != null)
@@ -195,7 +203,8 @@ public class UserPlantService : IUserPlantService
     
     public async Task<List<Plant>> FetchRemainingPlantsAsync(HashSet<int> existingPlantIds)
     {
-        return await _db.Plants
+        await using var db = _factory.CreateDbContext();
+        return await db.Plants
             .Where(p => !existingPlantIds.Contains(p.Id))
             .ToListAsync();
     }
