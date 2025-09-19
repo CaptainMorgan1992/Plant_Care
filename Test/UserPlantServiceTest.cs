@@ -33,7 +33,7 @@ public class UserPlantServiceTest
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
         _db = new ApplicationDbContext(options);
-        _dbFactory = new TestDbContextFactory(_db);
+        _dbFactory = new TestDbContextFactory(options);
 
         _userPlantServiceMock = new Mock<UserPlantService>(_dbFactory, _userService.Object, _loggerMock.Object)
         {

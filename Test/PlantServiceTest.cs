@@ -24,12 +24,6 @@ public class PlantServiceTest
         _loggerMock = new Mock<ILogger<UserService>>();
         _userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, null!);
         _dbMock = new Mock<ApplicationDbContext>();
-        
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-        var db = new ApplicationDbContext(options);
-        var dbFactory = new TestDbContextFactory(db);
     }
     
     [Test]
@@ -38,19 +32,23 @@ public class PlantServiceTest
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-        var dbContext = new ApplicationDbContext(options);
-        var dbFactory = new TestDbContextFactory(dbContext);
+        var dbFactory = new TestDbContextFactory(options);
         
-        dbContext.Plants.Add(new Auth0_Blazor.Models.Plant
-            {   Id = 1,
+        using (var dbContext = new ApplicationDbContext(options))
+        {
+            dbContext.Plants.Add(new Auth0_Blazor.Models.Plant
+            {
+                Id = 1,
                 Name = "Plant1", 
                 Description = "Some description",
                 ImageUrl = "https://example.com/plant1.jpg",
                 Origin = "Origin1",
                 WaterFrequency = WaterFrequency.Normal
             });
-        
-        dbContext.Plants.Add(new Auth0_Blazor.Models.Plant
+            
+            await dbContext.SaveChangesAsync();
+            
+            dbContext.Plants.Add(new Auth0_Blazor.Models.Plant
             {   Id = 2,
                 Name = "Plant2", 
                 Description = "Some description2",
@@ -58,8 +56,10 @@ public class PlantServiceTest
                 Origin = "Origin2",
                 WaterFrequency = WaterFrequency.High
             });
-        
-        await dbContext.SaveChangesAsync();
+            
+            await dbContext.SaveChangesAsync();
+
+        }
         
         var plantService = new PlantService(dbFactory, _userService);
         var result = await plantService.GetAllPlantsAsync();
@@ -72,20 +72,24 @@ public class PlantServiceTest
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-        var dbContext = new ApplicationDbContext(options);
-        var dbFactory = new TestDbContextFactory(dbContext);
-        
-        dbContext.Plants.Add(new Auth0_Blazor.Models.Plant
-        {   Id = 1,
-            Name = "Plant1", 
-            Description = "Some description",
-            ImageUrl = "https://example.com/plant1.jpg",
-            Origin = "Origin1",
-            WaterFrequency = WaterFrequency.Normal
-        });
-        
-        await dbContext.SaveChangesAsync();
-        
+        var dbFactory = new TestDbContextFactory(options);
+
+        using (var dbContext = new ApplicationDbContext(options))
+        {
+            dbContext.Plants.Add(new Auth0_Blazor.Models.Plant
+            {
+                Id = 1,
+                Name = "Plant1",
+                Description = "Some description",
+                ImageUrl = "https://example.com/plant1.jpg",
+                Origin = "Origin1",
+                WaterFrequency = WaterFrequency.Normal
+            });
+
+            await dbContext.SaveChangesAsync();
+
+        }
+
         var plantService = new PlantService(dbFactory, _userService);
         var result = await plantService.GetPlantByIdAsync(1);
         
@@ -104,51 +108,51 @@ public class PlantServiceTest
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-        var dbContext = new ApplicationDbContext(options);
-        var dbFactory = new TestDbContextFactory(dbContext);
-        
+        var dbFactory = new TestDbContextFactory(options);
         
         var userService = new UserService(_authStateProviderMock.Object, _loggerMock.Object, dbFactory);
         var plantService = new PlantService(dbFactory, userService);
-        
-        var newPlant = new Auth0_Blazor.Models.Plant
-        {
-            Name = "Plant1",
-            Description = "Some description",
-            ImageUrl = "https://example.com/plant1.jpg",
-            Origin = "Origin1",
-            WaterFrequency = WaterFrequency.Normal
-        };
-        
-        var nonAdminUser = new Auth0_Blazor.Models.User
-        {
-            OwnerId = "non-admin-owner-id",
-            IsAdmin = false,
-            Name = "NonAdminUser",
-        };
-        
-        var adminUser = new Auth0_Blazor.Models.User
-        {
-            OwnerId = "admin-owner-id",
-            IsAdmin = true,
-            Name = "AdminUser"
-        };
 
-        dbContext.Users.Add(nonAdminUser);
-        dbContext.Users.Add(adminUser);
+        using (var dbContext = new ApplicationDbContext(options))
+        {
+
+            var newPlant = new Auth0_Blazor.Models.Plant
+            {
+                Name = "Plant1",
+                Description = "Some description",
+                ImageUrl = "https://example.com/plant1.jpg",
+                Origin = "Origin1",
+                WaterFrequency = WaterFrequency.Normal
+            };
+
+            var nonAdminUser = new Auth0_Blazor.Models.User
+            {
+                OwnerId = "non-admin-owner-id",
+                IsAdmin = false,
+                Name = "NonAdminUser",
+            };
+
+            var adminUser = new Auth0_Blazor.Models.User
+            {
+                OwnerId = "admin-owner-id",
+                IsAdmin = true,
+                Name = "AdminUser"
+            };
+
+            dbContext.Users.Add(nonAdminUser);
+            dbContext.Users.Add(adminUser);
+
+            await dbContext.SaveChangesAsync();
+            
+            var ownerIsNotAdmin = await userService.IsUserAdminAsync("non-admin-owner-id");
+            Assert.That(ownerIsNotAdmin, Is.False);
+            Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
+                await plantService.AddNewPlantAsync(newPlant, "non-admin-owner-id"));
         
-        await dbContext.SaveChangesAsync();
-        
-        var ownerIsNotAdmin = await userService.IsUserAdminAsync("non-admin-owner-id");
-        Assert.That(ownerIsNotAdmin, Is.False);
-        Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
-            await plantService.AddNewPlantAsync(newPlant, "non-admin-owner-id"));
-        
-        var ownerIsAdmin = await userService.IsUserAdminAsync("admin-owner-id");
-        Assert.That(ownerIsAdmin, Is.True);
-        var result = await plantService.AddNewPlantAsync(newPlant, "admin-owner-id");
-        Assert.That(result, Is.True);
-        
+            var ownerIsAdmin = await userService.IsUserAdminAsync("admin-owner-id");
+            Assert.That(ownerIsAdmin, Is.True);
+            var result = await plantService.AddNewPlantAsync(newPlant, "admin-owner-id");
+            Assert.That(result, Is.True);
+        }
     }
-
 }

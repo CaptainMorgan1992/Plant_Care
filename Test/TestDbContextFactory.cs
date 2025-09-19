@@ -5,15 +5,15 @@ using Auth0_Blazor.Data;
 
 public class TestDbContextFactory : IDbContextFactory<ApplicationDbContext>
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly DbContextOptions<ApplicationDbContext> _options;
 
-    public TestDbContextFactory(ApplicationDbContext dbContext)
+    public TestDbContextFactory(DbContextOptions<ApplicationDbContext> options)
     {
-        _dbContext = dbContext;
+        _options = options;
     }
 
-    public ApplicationDbContext CreateDbContext() => _dbContext;
+    public ApplicationDbContext CreateDbContext() => new ApplicationDbContext(_options);
 
     public ValueTask<ApplicationDbContext> CreateDbContextAsync(CancellationToken cancellationToken = default)
-        => new ValueTask<ApplicationDbContext>(_dbContext);
+        => new ValueTask<ApplicationDbContext>(new ApplicationDbContext(_options));
 }
