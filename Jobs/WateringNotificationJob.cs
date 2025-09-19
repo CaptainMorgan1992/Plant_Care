@@ -8,7 +8,7 @@ namespace Auth0_Blazor.Jobs;
 
 public class WateringNotificationJob : IJob
 {
-    private readonly NotificationService _notificationService;
+    private readonly INotificationService _notificationService;
     private readonly ILogger<WateringNotificationJob> _logger;
     private readonly IUserPlantService _userPlantService;
     
